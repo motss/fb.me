@@ -1,14 +1,14 @@
 // @ts-check
 
 /** Import project dependencies */
-import test from 'ava';
+// import test from 'ava';
 import express from 'express';
 
 /** Import other modules */
-import fbMe, {
-  fetchAsJson,
-  server,
-} from '../';
+// import fbMe, {
+//   fetchAsJson,
+//   server,
+// } from '../';
 
 /** Import tests */
 import fetchAsJsonSpec from './helper/fetch-as-json.spec';
@@ -20,11 +20,11 @@ const pageAccessToken = process.env.FB_PAGE_ACCESS_TOKEN;
 const pageId = process.env.FB_PAGE_ID;
 const verifyToken = process.env.FB_VERIFY_TOKEN;
 
-test('fetchAsJson works', async (t) => {
+test('fetchAsJson works', async () => {
   try {
-    await fetchAsJsonSpec(t);
+    await fetchAsJsonSpec();
   } catch (e) {
-    t.fail(e);
+    throw e;
   }
 });
 

@@ -21,6 +21,8 @@
     "url": "git@github.com:motss/fb.me.git"
   },
   "scripts": {
+    "ava": "nyc ava --verbose",
+    "ava:debug": "nyc env-cmd ./src/test/.test.env ava --verbose",
     "build": "npm run ts && cross-env NODE_ENV=production gulp build && npm run cleanup",
     "build:debug": "npm run ts && gulp build && npm run cleanup",
     "check": "npm run lint && npm run nsp",
@@ -30,8 +32,7 @@
     "lint:fix": "tslint -p . -c tslint.json --fix",
     "nsp": "nsp check",
     "prepublishOnly": "npm run check && npm run build",
-    "test": "nyc ava --verbose",
-    "test:debug": "env-cmd ./src/test/.test.env nyc ava --verbose",
+    "test": "jest",
     "ts": "tsc --target esnext --lib esnext,esnext.asynciterable --module commonjs gulpfile.ts"
   },
   "dependencies": {
@@ -42,9 +43,9 @@
   "devDependencies": {
     "@std/esm": "^0.18.0",
     "@types/express": "^4.11.0",
+    "@types/jest": "^21.1.9",
     "@types/node": "^8.0.57",
     "@types/node-fetch": "^1.6.7",
-    "ava": "^0.24.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-function-bind": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -59,8 +60,9 @@
     "gulp-sequence": "^0.4.6",
     "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.3",
+    "jest": "^22.0.4",
     "nsp": "^3.1.0",
-    "nyc": "^11.4.1",
+    "ts-jest": "^22.0.0",
     "tslint": "^5.8.0",
     "tslint-config-airbnb": "^5.4.2",
     "tslint-consistent-codestyle": "^1.11.0",
@@ -72,62 +74,32 @@
     "npm": ">= 5.5.1"
   },
   "@std/esm": "cjs",
-  "ava": {
-    "require": [
-      "@std/esm"
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage",
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "coveragePathIgnorePatterns": [
+      "./test/",
+      "src/test/"
     ],
-    "files": [
-      "test/index.js"
-    ],
-    "failFast": true
-  },
-  "nyc": {
-    "check-coverage": true,
-    "per-file": true,
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "exclude": [
-      "src/**/*.d.ts",
-      "src/**/test*/*.ts",
-      "src/**/test*/*.tsx",
-      "src/**/demo*/*.ts",
-      "src/**/demo*/*.tsx"
-    ],
-    "reporter": [
-      "lcov",
-      "text-lcov"
-    ],
-    "require": [
-      "@std/esm"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "cache": false,
-    "sourceMap": false,
-    "instrument": false,
-    "all": false,
-    "report-dir": "./coverage",
-    "watermarks": {
-      "lines": [
-        80,
-        95
-      ],
-      "functions": [
-        80,
-        95
-      ],
-      "branches": [
-        80,
-        95
-      ],
-      "statements": [
-        80,
-        95
-      ]
-    }
+    "verbose": true,
+    "bail": true,
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "\/test\/index\\.spec\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   }
 }
