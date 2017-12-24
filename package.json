@@ -30,13 +30,20 @@
     "lint:fix": "tslint -p . -c tslint.json --fix",
     "nsp": "nsp check",
     "prepublishOnly": "npm run check && npm run build",
+    "test:debug": "env-cmd ./src/test/.test.env nyc ava",
     "test": "nyc ava",
     "ts": "tsc --target esnext --lib esnext,esnext.asynciterable --module commonjs gulpfile.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.16.2",
+    "make-fetch-happen": "^2.6.0",
+    "whitelister": "0.0.5"
+  },
   "devDependencies": {
     "@std/esm": "^0.18.0",
+    "@types/express": "^4.11.0",
     "@types/node": "^8.0.57",
+    "@types/node-fetch": "^1.6.7",
     "ava": "^0.24.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-function-bind": "^6.22.0",

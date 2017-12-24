@@ -2,25 +2,56 @@
 
 /** Import project dependencies */
 import test from 'ava';
+import express from 'express';
 
 /** Import other modules */
-import greeting, { greetingSync } from '../';
+import fbMe, {
+  fetchAsJson,
+  server,
+} from '../';
 
-test('greeting works', async (t) => {
+/** Setting up */
+const PORT = 5000;
+const appId = process.env.FB_APP_ID;
+const pageAccessToken = process.env.FB_PAGE_ACCESS_TOKEN;
+const pageId = process.env.FB_PAGE_ID;
+const verifyToken = process.env.FB_VERIFY_TOKEN;
+
+test('server works', async (t) => {
   try {
-    const d = await greeting('John Doe');
+    const app = express();
 
-    t.is(d, 'Hello, John Doe!');
-  } catch (e) {
-    t.fail(e);
-  }
-});
+    app.enable('trust proxy');
+    app.use('/webhook', fbMe({
+      appId,
+      pageAccessToken,
+      pageId,
+      verifyToken,
 
-test('greetingSync works', async (t) => {
-  try {
-    const d = greetingSync('John Doe');
+      fetchTimeout: 599e3,
+      graphUrl: 'https://graph.facebook.com/2.11',
+      notificationType: 'NO_PUSH',
+      typingDelay: 5e2,
 
-    t.is(d, 'Hello, John Doe!');
+      onMessage: async (sender, text) => {
+        try {
+          return '';
+        } catch (e) {
+          throw e;
+        }
+      },
+      // onPostback,
+      // onQuickReply,
+    }));
+
+    console.log('#', {
+      appId,
+      pageAccessToken,
+      pageId,
+      verifyToken,
+    });
+
+    t.truthy(app);
   } catch (e) {
     t.fail(e);
   }

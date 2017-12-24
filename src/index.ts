@@ -1,19 +1,10 @@
 // @ts-check
 
-export async function greeting(
-  name: string = 'World'
-) {
-  try {
-    return await greetingSync(name);
-  } catch (e) {
-    throw e;
-  }
-}
+import {
+  server as fbMe,
+} from './lib/server';
 
-export function greetingSync(
-  name: string = 'World'
-) {
-  return `Hello, ${name}!`;
-}
+export * from './helper/fetch-as-json';
+export * from './lib/server';
 
-export default greeting;
+export default fbMe;

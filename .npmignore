@@ -16,6 +16,7 @@ yarn-error.log*
 coverage*/
 demo*/
 node_modules/
+src/
 
 # .js files
 gulpfile*.js
