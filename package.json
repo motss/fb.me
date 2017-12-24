@@ -30,11 +30,14 @@
     "lint:fix": "tslint -p . -c tslint.json --fix",
     "nsp": "nsp check",
     "prepublishOnly": "npm run check && npm run build",
+    "test": "nyc ava",
     "ts": "tsc --target esnext --lib esnext,esnext.asynciterable --module commonjs gulpfile.ts"
   },
   "dependencies": {},
   "devDependencies": {
+    "@std/esm": "^0.18.0",
     "@types/node": "^8.0.57",
+    "ava": "^0.24.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-function-bind": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -50,6 +53,7 @@
     "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.3",
     "nsp": "^3.1.0",
+    "nyc": "^11.4.1",
     "tslint": "^5.8.0",
     "tslint-config-airbnb": "^5.4.2",
     "tslint-consistent-codestyle": "^1.11.0",
@@ -60,5 +64,59 @@
     "node": ">= 8.9.0",
     "npm": ">= 5.5.1"
   },
-  "@std/esm": "cjs"
+  "@std/esm": "cjs",
+  "ava": {
+    "require": [
+      "@std/esm"
+    ]
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "exclude": [
+      "src/**/*.d.ts",
+      "src/**/test*/*.ts",
+      "src/**/test*/*.tsx",
+      "src/**/demo*/*.ts",
+      "src/**/demo*/*.tsx"
+    ],
+    "reporter": [
+      "lcov",
+      "text-lcov"
+    ],
+    "require": [
+      "@std/esm"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "cache": false,
+    "sourceMap": false,
+    "instrument": false,
+    "all": false,
+    "report-dir": "./coverage",
+    "watermarks": {
+      "lines": [
+        80,
+        95
+      ],
+      "functions": [
+        80,
+        95
+      ],
+      "branches": [
+        80,
+        95
+      ],
+      "statements": [
+        80,
+        95
+      ]
+    }
+  }
 }
