@@ -1,17 +1,20 @@
-*.env
-.DS_Store
+# dot files
 .build/
+.DS_Store
+.esm-cache
 .nyc_output
 .tmp/
 .vscode
-build/
-coverage/
-dist*/
-dist/**/__mocks__/
-dist/**/__tests__/
-dist/**/demo/
-logs/**/[^.]*
-node_modules/
+*.env
+
+# debug
 npm-debug.log*
-out/
 yarn-error.log*
+
+# folders
+./test*/
+demo*/
+node_modules/
+
+# .js files
+gulpfile*.js

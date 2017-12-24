@@ -1,61 +1,124 @@
-[![Stories in Ready](https://badge.waffle.io/motss/fb.me.png?label=ready&title=Ready)](https://waffle.io/motss/fb.me?utm_source=badge)
-# fb.me
+<div align="center" style="text-align: center;">
+  <h1 style="border-bottom: none;">fb.me</h1>
 
-[![NPM][nodei-image]][nodei-url]
+  <p>Better greeting message</p>
+</div>
 
-> Facebook Messenger SDK
+<hr />
 
-[![NPM version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Build status][appveyor-image]][appveyor-url]
-[![Dependency Status][daviddm-image]][daviddm-url]
-[![Coverage percentage][coveralls-image]][coveralls-url]
-[![codecov][codecov-image]][codecov-url]
-[![Known Vulnerabilities][snyk-image]][snyk-url]
-[![NSP Status][nsp-image]][nsp-url]
-[![Inline docs][inch-image]][inch-url]
-[![GitHub license][license-image]][license-url]
-[![Greenkeeper badge][greenkeeper-image]][greenkeeper-url]
+[![NPM][nodei-badge]][nodei-url]
 
-## Install
+[![Build Status][travis-badge]][travis-url]
+[![Version][version-badge]][version-url]
+[![Downloads][downloads-badge]][downloads-url]
+[![MIT License][mit-license-badge]][mit-license-url]
+[![Dependency Status][daviddm-badge]][daviddm-url]
+[![NSP Status][nsp-badge]][nsp-url]
 
-```
+[![Code of Conduct][coc-badge]][coc-url]
+
+[![codebeat-badge]][codebeat-url]
+[![codacy-badge]][codacy-url]
+[![inch-badge]][inch-url]
+
+> Lightweight Facebook Messenger SDK
+
+## Table of contents
+
+- [Pre-requisite](#pre-requisite)
+- [Setup](#setup)
+  - [Install](#install)
+  - [Usage](#usage)
+    - [Node.js](#nodejs)
+    - [Native ES modules or TypeScript](#native-es-modules-or-typescript)
+- [API Reference](#api-reference)
+  - [greeting(name)](#greetingname)
+  - [greetingSync(name)](#greetingsyncname)
+- [License](#license)
+
+## Pre-requisites
+
+- [Node.js][node-js-url] >= 8.9.0
+- [NPM][npm-url] >= 5.5.1 ([NPM][npm-url] comes with [Node.js][node-js-url] so there is no need to install separately.)
+
+## Setup
+
+### Install
+
+```sh
+# Install via NPM
 $ npm install --save fb.me
 ```
 
-## Usage
+### Usage
+
+#### Node.js
 
 ```js
-const fbme = require('fb.me');
-
+const greeting = require('fb.me');
 ```
+
+#### Native ES modules or TypeScript
+
+```ts
+import greeting from 'fb.me';
+```
+
+## API Reference
+
+### greeting(name)
+
+  - name <[string][string-mdn-url]> Name of the person to greet at.
+  - returns: <[Promise][promise-mdn-url]<[string][string-mdn-url]>> Promise which resolves with a greeting message.
+
+### greetingSync(name)
+
+This methods works the same as `greeting(name)` except that this is the synchronous version.
 
 ## License
 
-[MIT License](http://motss.mit-license.org/) © Rong Sen Ng
+[MIT License](https://motss.mit-license.org/) © Rong Sen Ng
 
 
-[nodei-image]: https://nodei.co/npm/fb.me.png?downloads=true&downloadRank=true&stars=true
-[nodei-url]: https://nodei.co/npm/fb.me/
-[npm-image]: https://badge.fury.io/js/fb.me.svg
-[npm-url]: https://npmjs.org/package/fb.me
-[travis-image]: https://travis-ci.org/motss/fb.me.svg?branch=master
+
+[typescript-url]: https://github.com/Microsoft/TypeScript
+[node-js-url]: https://nodejs.org
+[npm-url]: https://www.npmjs.com
+[node-releases-url]: https://nodejs.org/en/download/releases
+[string-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+[promise-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+
+
+[nodei-badge]: https://nodei.co/npm/fb.me.png?downloads=true&downloadRank=true&stars=true
+
+[travis-badge]: https://img.shields.io/travis/motss/fb.me.svg?style=flat-square
+
+[version-badge]: https://img.shields.io/npm/v/fb.me.svg?style=flat-square
+[downloads-badge]: https://img.shields.io/npm/dm/fb.me.svg?style=flat-square
+[mit-license-badge]: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square
+[nsp-badge]: https://nodesecurity.io/orgs/motss/projects/a1c57ec8-9c17-4912-932b-f1ff6284e2ae/badge
+[daviddm-badge]: https://img.shields.io/david/expressjs/express.svg?style=flat-square
+
+[coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
+
+[codebeat-badge]: https://codebeat.co/badges/e486e791-12b7-4198-b834-0fa5bd04e1c3
+[codacy-badge]: https://api.codacy.com/project/badge/Grade/a70d1556b4e74711a162c4fd4dbb68a1
+[inch-badge]: http://inch-ci.org/github/motss/fb.me.svg?branch=master
+
+
+
+[nodei-url]: https://nodei.co/npm/fb.me
+
 [travis-url]: https://travis-ci.org/motss/fb.me
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/796r33kh1pmg8gcm/branch/master?svg=true
-[appveyor-url]: https://ci.appveyor.com/project/motss/deep-clone/branch/master
-[daviddm-image]: https://david-dm.org/motss/fb.me.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/motss/fb.me
-[coveralls-image]: https://coveralls.io/repos/github/motss/fb.me/badge.svg?branch=master
-[coveralls-url]: https://coveralls.io/github/motss/fb.me?branch=master
-[codecov-image]: https://codecov.io/gh/motss/fb.me/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/motss/fb.me
-[snyk-image]: https://snyk.io/test/github/motss/fb.me/badge.svg
-[snyk-url]: https://snyk.io/test/github/motss/fb.me
-[nsp-image]: https://nodesecurity.io/orgs/motss/projects/a1c57ec8-9c17-4912-932b-f1ff6284e2ae/badge
+[version-url]: https://npmjs.org/package/fb.me
+[downloads-url]: http://www.npmtrends.com/fb.me
+[mit-license-url]: https://github.com/motss/fb.me/blob/master/LICENSE
 [nsp-url]: https://nodesecurity.io/orgs/motss/projects/a1c57ec8-9c17-4912-932b-f1ff6284e2ae
-[inch-image]: http://inch-ci.org/github/motss/fb.me.svg?branch=master
+[daviddm-url]: https://david-dm.org/motss/fb.me
+
+[coc-url]: https://github.com/motss/fb.me/blob/master/CODE_OF_CONDUCT.md
+
+[codebeat-url]: https://codebeat.co/projects/github-com-motss-fb.me-master
+[codacy-url]: https://www.codacy.com/app/motss/fb.me?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=motss/fb.me&amp;utm_campaign=Badge_Grade
 [inch-url]: http://inch-ci.org/github/motss/fb.me
-[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
-[license-url]: https://motss.mit-license.org/
-[greenkeeper-image]: https://badges.greenkeeper.io/motss/fb.me.svg
-[greenkeeper-url]: https://greenkeeper.io/
