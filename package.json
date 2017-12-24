@@ -30,8 +30,8 @@
     "lint:fix": "tslint -p . -c tslint.json --fix",
     "nsp": "nsp check",
     "prepublishOnly": "npm run check && npm run build",
-    "test:debug": "env-cmd ./src/test/.test.env nyc ava",
-    "test": "nyc ava",
+    "test": "nyc ava --verbose",
+    "test:debug": "env-cmd ./src/test/.test.env nyc ava --verbose",
     "ts": "tsc --target esnext --lib esnext,esnext.asynciterable --module commonjs gulpfile.ts"
   },
   "dependencies": {
@@ -75,7 +75,11 @@
   "ava": {
     "require": [
       "@std/esm"
-    ]
+    ],
+    "files": [
+      "test/index.js"
+    ],
+    "failFast": true
   },
   "nyc": {
     "check-coverage": true,

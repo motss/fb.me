@@ -8,10 +8,10 @@ import fetch from 'make-fetch-happen';
 
 export async function fetchAsJson(
   url: string,
-  opts: RequestInit
+  opts?: RequestInit
 ) {
   try {
-    const r = await fetch(url, opts);
+    const r = await fetch(url, opts || {});
     const hs = r.status;
     const d = await r.json();
 
