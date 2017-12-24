@@ -11,7 +11,7 @@ import fbMe, {
 } from '../';
 
 /** Import tests */
-import fetchAsJsonSpec from './helper/fetch-as-json';
+import fetchAsJsonSpec from './helper/fetch-as-json.spec';
 
 /** Setting up */
 const PORT = 5000;
