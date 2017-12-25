@@ -75,6 +75,35 @@
   },
   "@std/esm": "cjs",
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "babelConfig": {
+          "presets": [
+            [
+              "env",
+              {
+                "targets": {
+                  "node": "current"
+                },
+                "spec": true,
+                "modules": "commonjs",
+                "useBuiltIns": true
+              }
+            ]
+          ],
+          "plugins": [
+            "transform-function-bind",
+            [
+              "transform-object-rest-spread",
+              {
+                "useBuiltIns": true
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "testEnvironment": "node",
     "collectCoverage": true,
     "coverageDirectory": "./coverage",
     "coverageThreshold": {
@@ -94,7 +123,7 @@
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "\/test\/index\\.spec\\.ts$",
+    "testRegex": "/test/index\\.spec\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "tsx",

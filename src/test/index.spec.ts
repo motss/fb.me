@@ -1,8 +1,7 @@
 // @ts-check
 
 /** Import project dependencies */
-// import test from 'ava';
-import express from 'express';
+// import express from 'express';
 
 /** Import other modules */
 // import fbMe, {
@@ -12,20 +11,53 @@ import express from 'express';
 
 /** Import tests */
 import fetchAsJsonSpec from './helper/fetch-as-json.spec';
+import { sendReadReceiptSpec } from './helper/send-read-receipt.spec';
+import { locky } from './util/locky/server';
 
 /** Setting up */
-const PORT = 5000;
-const appId = process.env.FB_APP_ID;
-const pageAccessToken = process.env.FB_PAGE_ACCESS_TOKEN;
-const pageId = process.env.FB_PAGE_ID;
-const verifyToken = process.env.FB_VERIFY_TOKEN;
+const LOCKY_PORT = 5353;
+// const appId = process.env.FB_APP_ID;
+// const pageAccessToken = process.env.FB_PAGE_ACCESS_TOKEN;
+// const pageId = process.env.FB_PAGE_ID;
+// const verifyToken = process.env.FB_VERIFY_TOKEN;
 
-test('fetchAsJson works', async () => {
-  try {
-    await fetchAsJsonSpec();
-  } catch (e) {
-    throw e;
-  }
+describe('test fetchAsJson', async () => {
+  test('fetchAsJson works', async () => {
+    try {
+      await fetchAsJsonSpec();
+    } catch (e) {
+      throw e;
+    }
+  });
+});
+
+describe('test sendReadReceipt', async () => {
+  let mockServer = null;
+
+  beforeAll(async () => {
+    mockServer = (await locky())
+      .listen(LOCKY_PORT, () => {
+        console.info(`Locky Express running at port ${LOCKY_PORT}...`);
+      });
+
+    return mockServer;
+  });
+
+  afterAll(() => {
+    console.info('Closing Locky Express...');
+
+    return mockServer.close(() => {
+      console.info('Locky Express shut down!');
+    });
+  });
+
+  test('sendReadReceipt works', async () => {
+    try {
+      await sendReadReceiptSpec();
+    } catch (e) {
+      throw e;
+    }
+  });
 });
 
 // test('server works', async (t) => {

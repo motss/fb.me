@@ -1,18 +1,24 @@
 // @ts-check
 
-export declare interface SendAsReadReceiptOptions extends AppConfig {
+export declare interface SendAsReadReceiptOptions {
+  appFetchTimeout: number;
+  fbNotificationType: string | 'NO_PUSH' | 'REGULAR';
+  fbGraphUrl: string;
+  fbPageAccessToken: string;
+
   headers?: {
     [key: string]: any;
   };
+  agent?: http.Agent | https.Agent;
 }
 
 /** Import typings */
 import {
   FacebookEventId,
 } from '../lib/handle-webhook';
-import { AppConfig } from '../lib/server';
 
 /** Import project dependencies */
+import http from 'http';
 import https from 'https';
 
 /** Import other modules */
@@ -30,9 +36,11 @@ export async function sendReadReceipt(
       fbPageAccessToken,
 
       headers,
+      agent,
     } = options;
     const url = `${fbGraphUrl}/me/messages?access_token=${fbPageAccessToken}`;
     const fetchOpts = {
+      agent,
       method: 'POST',
       compress: true,
       timeout: +appFetchTimeout,
@@ -40,9 +48,6 @@ export async function sendReadReceipt(
         ...(headers || {}),
         'content-type': 'application/json',
       },
-      agent: new https.Agent({
-        keepAlive: true,
-      }),
       body: JSON.stringify({
         recipient,
         messaging_type: 'RESPONSE',
