@@ -11,8 +11,9 @@
 
 /** Import tests */
 import fetchAsJsonSpec from './helper/fetch-as-json.spec';
-import { sendReadReceiptSpec } from './helper/send-read-receipt.spec';
-import { locky } from './util/locky/server';
+import sendReadReceiptSpec from './helper/send-read-receipt.spec';
+import handleReceiveMessageSpec from './lib/handle-receive-message.spec';
+import locky from './util/locky/server';
 
 /** Setting up */
 const LOCKY_PORT = 5353;
@@ -54,6 +55,14 @@ describe('test sendReadReceipt', async () => {
   test('sendReadReceipt works', async () => {
     try {
       await sendReadReceiptSpec();
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  test('handleReceiveMessage works', async () => {
+    try {
+      await handleReceiveMessageSpec();
     } catch (e) {
       throw e;
     }
