@@ -89,7 +89,7 @@ export async function handleReceiveMessageSpec() {
         return quickReply;
       },
     };
-    const testEventForText: FacebookMessageEvent = {
+    const eventForText: FacebookMessageEvent = {
       message: {
         mid: await fbId(16),
         seq: +await fbId(16),
@@ -98,7 +98,7 @@ export async function handleReceiveMessageSpec() {
       sender: { id: await fbId(16) },
       recipient: { id: await fbId(16) },
     };
-    const testEventForQuickReply: FacebookMessageEvent = {
+    const eventForQuickReply: FacebookMessageEvent = {
       message: {
         mid: await fbId(16),
         seq: +await fbId(16),
@@ -112,8 +112,8 @@ export async function handleReceiveMessageSpec() {
 
     expect.assertions(7);
 
-    await testOKRequestForText(okAppConfig, testEventForText);
-    await testOKRequestForQuickReply(okAppConfig, testEventForQuickReply);
+    await testOKRequestForText(okAppConfig, eventForText);
+    await testOKRequestForQuickReply(okAppConfig, eventForQuickReply);
 
     await testBadRequest(okAppConfig, undefined);
   } catch (e) {
