@@ -16,9 +16,17 @@ export async function sendReadReceipt(
   recipient: FacebookEventId
 ) {
   try {
+    const {
+      id,
+    } = recipient || {} as FacebookEventId;
+
+    if (typeof id === 'undefined') {
+      throw new TypeError('recipient[id] is undefined');
+    }
+
     return {
       status: expected === 'ok' ? 200 : 400,
-      recipient_id: recipient.id || await fbId(16),
+      recipient_id: id,
     };
   } catch (e) {
     throw e;

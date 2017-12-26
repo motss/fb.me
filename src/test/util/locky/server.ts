@@ -37,11 +37,11 @@ export async function locky(): Promise<express.Application> {
 
     app.use((err, req, res, next) => {
       if (err instanceof Error) {
-        console.error(`[LOCKY][FATALERR] From ${req.originalUrl}`, err);
+        console.warn(`[LOCKY][FATALERR] From ${req.originalUrl}`, err);
 
-        return res.send(500).send({
+        return res.status(500).send({
           status: 'Fatal',
-          message: 'Fatal error',
+          message: err.message || 'Fatal error',
         });
       }
 

@@ -11,7 +11,7 @@ export declare interface FacebookMessageEventMessage {
   seq: number;
   quick_reply?: MessagePayload;
   attachements?: MessageAttachments;
-  text: string;
+  text?: string; /** FIXME: Can this be optional when it's a quick reply? */
 }
 export declare interface FacebookMessageEvent extends FacebookEvent {
   message: FacebookMessageEventMessage;
@@ -33,6 +33,12 @@ export async function handleReceiveMessage(
       sender,
       message,
     } = event || {} as FacebookMessageEvent;
+    const {
+      quick_reply,
+      text,
+    } = message || {} as FacebookMessageEventMessage;
+    const hasQuickReply = typeof quick_reply !== 'undefined';
+    const hasText = typeof text !== 'undefined';
 
     /**
      * It's good practice to send the user a read receipt so they know
@@ -41,7 +47,11 @@ export async function handleReceiveMessage(
      */
     await sendReadReceipt(sender, appConfig);
 
-    return typeof message.quick_reply !== 'undefined'
+    if (!hasQuickReply && !hasText) {
+      throw new TypeError('messageEvent is undefined');
+    }
+
+    return hasQuickReply
       ? await appConfig.onQuickReply(sender, message.quick_reply)
       : await appConfig.onMessage(sender, message.text);
   } catch (e) {

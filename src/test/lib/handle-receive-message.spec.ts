@@ -1,7 +1,10 @@
 // @ts-check
 
 /** Import typings */
-import { FacebookMessageEvent } from '../../lib/handle-receive-message';
+import {
+  FacebookMessageEvent,
+  MessagePayload,
+} from '../../lib/handle-receive-message';
 import { FacebookEventId } from '../../lib/handle-webhook';
 import { AppConfig } from '../../lib/server';
 
@@ -14,7 +17,7 @@ import fbId from '../util/fb-id';
 //   return jest.fn(() => 'this is a mock');
 // });
 
-export async function testOKRequest(
+export async function testOKRequestForText(
   appConfig: AppConfig,
   event: FacebookMessageEvent
 ) {
@@ -26,6 +29,32 @@ export async function testOKRequest(
     expect(d).toEqual('test-message');
   } catch (e) {
     throw e;
+  }
+}
+
+export async function testOKRequestForQuickReply(
+  appConfig: AppConfig,
+  event: FacebookMessageEvent
+) {
+  try {
+    const d = await handleReceiveMessage(appConfig, event);
+
+    expect(d).toMatchObject({
+      payload: expect.stringContaining('test-quick-reply'),
+    });
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function testBadRequest(
+  appConfig: AppConfig,
+  event?: FacebookMessageEvent
+) {
+  try {
+    await handleReceiveMessage(appConfig, event);
+  } catch (e) {
+    expect(e).toEqual(new TypeError('messageEvent is undefined'));
   }
 }
 
@@ -49,8 +78,18 @@ export async function handleReceiveMessageSpec() {
 
         return text;
       },
+      onQuickReply: async (sender: FacebookEventId, quickReply: MessagePayload) => {
+        expect(sender).toMatchObject({
+          id: expect.stringMatching(/\d{16}/),
+        });
+        expect(quickReply).toMatchObject({
+          payload: expect.stringContaining('test-quick-reply'),
+        });
+
+        return quickReply;
+      },
     };
-    const testEvent: FacebookMessageEvent = {
+    const testEventForText: FacebookMessageEvent = {
       message: {
         mid: await fbId(16),
         seq: +await fbId(16),
@@ -59,10 +98,24 @@ export async function handleReceiveMessageSpec() {
       sender: { id: await fbId(16) },
       recipient: { id: await fbId(16) },
     };
+    const testEventForQuickReply: FacebookMessageEvent = {
+      message: {
+        mid: await fbId(16),
+        seq: +await fbId(16),
+        quick_reply: {
+          payload: 'test-quick-reply',
+        },
+      },
+      sender: { id: await fbId(16) },
+      recipient: { id: await fbId(16) },
+    };
 
-    expect.assertions(3);
+    expect.assertions(7);
 
-    await testOKRequest(okAppConfig, testEvent);
+    await testOKRequestForText(okAppConfig, testEventForText);
+    await testOKRequestForQuickReply(okAppConfig, testEventForQuickReply);
+
+    await testBadRequest(okAppConfig, undefined);
   } catch (e) {
     throw e;
   }
