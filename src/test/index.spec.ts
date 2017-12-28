@@ -13,10 +13,12 @@ beforeEach(async () => {
   }
 });
 
-describe('unit tests', async () => {
-  try {
-    await fetchAsJsonSpec(testConfig);
-  } catch (e) {
-    throw e;
-  }
+describe('unit test', async () => {
+  describe('helper', async () => {
+    try {
+      await fetchAsJsonSpec(testConfig);
+    } catch (e) {
+      throw e;
+    }
+  });
 });
