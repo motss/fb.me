@@ -1,6 +1,6 @@
 // @ts-check
 
-export async function fbId(
+export function fbId(
   idLength: number
 ) {
   try {

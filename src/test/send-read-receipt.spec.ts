@@ -1,9 +1,13 @@
 // @ts-check
 
+/** Import typings */
+import { FacebookEventId } from '../../lib/handle-webhook';
+
 /** Import other modules */
-import fetchAsJson from '../../helper/fetch-as-json';
-import testConfig from '../test-config';
-import locky from '../util/locky';
+import sendReadReceipt from '../../helper/send-read-receipt';
+import testConfig from './test-config';
+import fbId from './util/fb-id';
+import locky from './util/locky';
 
 beforeEach(async () => {
   try {
@@ -13,26 +17,34 @@ beforeEach(async () => {
   }
 });
 
-describe('fetch-as-json', async () => {
-  const {
-    fbGraphUrl,
-  } = testConfig;
+describe('send-read-receipt', async () => {
+  // FIXME: await fbId will destroy the whole test suite!!! Why Jest!
+  const recipient: FacebookEventId = {
+    id: fbId(16),
+  };
 
   test('OK response', async () => {
     try {
       expect.assertions(2);
 
-      const d = await fetchAsJson(`${fbGraphUrl}/fetchy?access_token=ok-fetchy`);
+      const d = await sendReadReceipt(recipient, {
+        ...testConfig,
+        fbPageAccessToken: 'ok-read-receipt',
+      });
 
       expect(d.status).toEqual(200);
       expect(d).toEqual({
         status: expect.any(Number),
         data: {
           status: expect.any(Number),
-          message: expect.stringMatching(/^ok/i),
+          recipient_id: expect.stringMatching(/\d{16}/i),
         },
       });
+
+      // return d;
     } catch (e) {
+      console.log(e);
+
       throw e;
     }
   });
@@ -41,14 +53,17 @@ describe('fetch-as-json', async () => {
     try {
       expect.assertions(2);
 
-      const d = await fetchAsJson(`${fbGraphUrl}/fetchy?access_token=bad-fetchy`);
+      const d = await sendReadReceipt(recipient, {
+        ...testConfig,
+        fbPageAccessToken: 'bad-read-recipient',
+      });
 
       expect(d.status).toBeGreaterThan(399);
       expect(d).toEqual({
         status: expect.any(Number),
         data: {
           status: expect.any(Number),
-          message: expect.stringMatching(/^bad/i),
+          recipient_id: expect.stringMatching(/\d{16}/i),
         },
       });
     } catch (e) {
@@ -60,7 +75,10 @@ describe('fetch-as-json', async () => {
     try {
       expect.assertions(2);
 
-      await fetchAsJson('/fail');
+      await sendReadReceipt(null, {
+        ...testConfig,
+        fbGraphUrl: '/fail',
+      });
     } catch (e) {
       expect(e instanceof TypeError).toEqual(true);
       expect(e.message).toEqual('Only absolute URLs are supported');

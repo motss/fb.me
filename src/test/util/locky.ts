@@ -1,5 +1,9 @@
 // @ts-check
 
+export declare interface NockRequestQuery {
+  access_token: string;
+}
+
 /** Import typings */
 import { TestConfig } from '../test-config';
 
@@ -10,6 +14,10 @@ import querystring from 'querystring';
 /** Import other modules */
 import fbId from './fb-id';
 
+export function getRequestQuery<T extends NockRequestQuery>(uri: string): T {
+  return querystring.parse<T>((uri || '').replace(/.+\?(.+)$/i, '$1'));
+}
+
 export async function meMessages(
   config: TestConfig
 ) {
@@ -19,26 +27,29 @@ export async function meMessages(
 
   try {
     nock(fbGraphUrl)
-      .post('/me/messages')
-      .query({ access_token: /^(ok|bad)/i })
-      .reply(function (_, rb) {
+      .post(uri => /^\/me\/messages\?access_token\=(ok|bad).+/i.test(uri))
+      .reply((uri, rb: any) => {
         const {
           recipient,
-        } = JSON.parse(rb);
+        } = rb;
+        const {
+          access_token,
+        } = getRequestQuery(uri);
 
-        if (typeof recipient.id === 'undefined') {
+        if (typeof (recipient && recipient.id) === 'undefined') {
           return [
             400,
             'recipient[id] is undefined',
           ];
         }
 
-        const rs = /^ok/i.test(this.req.access_token) ? 200 : 400;
+        const isOK = /^ok/i.test(access_token);
+        const rs = isOK ? 200 : 400;
 
         return [
           rs, {
             status: rs,
-            recipient: recipient.id,
+            recipient_id: recipient.id,
           },
         ];
       });
@@ -59,10 +70,8 @@ export async function testFetchAsJson(
       .get(uri => /^\/fetchy\?access_token\=(ok|bad).+/i.test(uri))
       .reply((uri) => {
         const {
-          access_token, /** @type {string} */
-        } = querystring.parse<{
-          access_token: string;
-        }>(uri.replace(/.+\?(.+)$/i, '$1'));
+          access_token,
+        } = getRequestQuery(uri);
 
         const isOK = /^ok/i.test(access_token);
         const rs = isOK ? 200 : 400;

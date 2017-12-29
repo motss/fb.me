@@ -37,7 +37,7 @@ export async function sendReadReceipt(
 
       headers,
       agent,
-    } = options;
+    } = options || {} as SendAsReadReceiptOptions;
     const url = `${fbGraphUrl}/me/messages?access_token=${fbPageAccessToken}`;
     const fetchOpts = {
       agent,
