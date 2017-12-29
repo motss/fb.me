@@ -88,6 +88,16 @@ export async function testFetchAsJson(
   }
 }
 
+export async function closeLocky() {
+  try {
+    console.info('Locky closed');
+
+    return nock.cleanAll();
+  } catch (e) {
+    throw e;
+  }
+}
+
 export async function locky(config) {
   try {
     console.info('Locky started');

@@ -3,11 +3,21 @@
 /** Import other modules */
 import fetchAsJson from '../../helper/fetch-as-json';
 import testConfig from '../test-config';
-import locky from '../util/locky';
+import locky, { closeLocky } from '../util/locky';
 
 beforeEach(async () => {
   try {
     return await locky(testConfig);
+  } catch (e) {
+    await closeLocky();
+
+    throw e;
+  }
+});
+
+afterEach(async () => {
+  try {
+    return await closeLocky();
   } catch (e) {
     throw e;
   }

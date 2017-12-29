@@ -116,9 +116,10 @@
         "statements": 80
       }
     },
-    "coveragePathIgnorePatterns": [
-      "./test/",
-      "src/test/"
+    "collectCoverageFrom": [
+      "**/src/**/*.{ts|tsx}",
+      "!**/node_modules/**",
+      "!**/src/test/**/*.{ts|tsx}"
     ],
     "verbose": true,
     "bail": true,

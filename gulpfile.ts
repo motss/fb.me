@@ -16,6 +16,7 @@ const TMP = '.tmp';
 const DIST = '.';
 const IGNORE_DIR = [
   `${SRC}/demo`,
+  `${SRC}/test`,
 ];
 const BABELRC = {
   presets: [

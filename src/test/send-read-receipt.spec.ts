@@ -1,17 +1,27 @@
 // @ts-check
 
 /** Import typings */
-import { FacebookEventId } from '../../lib/handle-webhook';
+import { FacebookEventId } from '../lib/handle-webhook';
 
 /** Import other modules */
-import sendReadReceipt from '../../helper/send-read-receipt';
+import sendReadReceipt from '../helper/send-read-receipt';
 import testConfig from './test-config';
 import fbId from './util/fb-id';
-import locky from './util/locky';
+import locky, { closeLocky } from './util/locky';
 
 beforeEach(async () => {
   try {
     return await locky(testConfig);
+  } catch (e) {
+    await closeLocky();
+
+    throw e;
+  }
+});
+
+afterEach(async () => {
+  try {
+    return await closeLocky();
   } catch (e) {
     throw e;
   }
@@ -75,10 +85,7 @@ describe('send-read-receipt', async () => {
     try {
       expect.assertions(2);
 
-      await sendReadReceipt(null, {
-        ...testConfig,
-        fbGraphUrl: '/fail',
-      });
+      await sendReadReceipt(null, null);
     } catch (e) {
       expect(e instanceof TypeError).toEqual(true);
       expect(e.message).toEqual('Only absolute URLs are supported');
