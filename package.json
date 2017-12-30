@@ -1,7 +1,6 @@
 {
   "name": "fb.me",
   "version": "0.0.0",
-  "private": true,
   "description": "Lightweight Facebook Messenger SDK",
   "keywords": [
     "fb.me",
