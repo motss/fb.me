@@ -1,13 +1,13 @@
 // @ts-check
 
 /** Import typings */
-import { FacebookEventId } from '../lib/handle-webhook';
+import { FacebookEventId } from '../../lib/handle-webhook';
 
 /** Import other modules */
-import sendReadReceipt from '../helper/send-read-receipt';
-import testConfig from './test-config';
-import fbId from './util/fb-id';
-import locky, { closeLocky } from './util/locky';
+import sendReadReceipt from '../../helper/send-read-receipt';
+import testConfig from '../test-config';
+import fbId from '../util/fb-id';
+import locky, { closeLocky } from '../util/locky';
 
 beforeEach(async () => {
   try {
