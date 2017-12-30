@@ -1,6 +1,6 @@
 // @ts-check
 
-export declare interface ServerHandlers {
+export interface ServerHandlers {
   onMessage?(sender: FacebookEventId, text: string): Promise<any>;
   onQuickReply?(sender: FacebookEventId, quickReply: MessagePayload): Promise<any>;
   onPostback?(sender: FacebookEventId, postback: FacebookPostbackEventPostback): Promise<any>;

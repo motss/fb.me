@@ -2,7 +2,7 @@
 
 /** Import other modules */
 import fetchAsJson from '../../helper/fetch-as-json';
-import testConfig from '../test-config';
+import { testConfig } from '../test-config';
 import locky, { closeLocky } from '../util/locky';
 
 beforeEach(async () => {

@@ -1,31 +1,28 @@
 // @ts-check
 
-/** Import typings */
-import { AppConfig } from './server';
-
 /** Import project dependencies */
 import express from 'express';
 
-export function verifySetup({
-  fbVerifyToken,
-}: AppConfig): express.Router {
-  try {
-    return express.Router({ mergeParams: true })
-      .get('/', async (req, res, next) => {
-        try {
-          if (req.query['hub.verify_token'] === fbVerifyToken) {
-            return res.status(200).send(req.query);
-          }
+export function verifySetup(verifyToken: string): express.Router {
+  return express.Router({ mergeParams: true })
+    .get('/', async (req, res, next) => {
+      try {
+        const hubVerifyToken = req.query['hub.verify_token'];
 
-          /** NOTE: Send error with HTTP status 200 */
-          return res.status(200).send('Error, wrong validation token');
-        } catch (e) {
-          return next(e);
+        if (typeof hubVerifyToken === 'undefined') {
+          throw new Error('hub.verify_token is missing');
         }
-      });
-  } catch (e) {
-    throw e;
-  }
+
+        if (hubVerifyToken === verifyToken) {
+          return res.status(200).send(req.query);
+        }
+
+        /** NOTE: Send error with HTTP status 200 */
+        return res.status(200).send('Error, wrong validation token');
+      } catch (e) {
+        return next(e);
+      }
+    });
 }
 
 export default verifySetup;

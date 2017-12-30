@@ -5,7 +5,7 @@ import { FacebookEventId } from '../../lib/handle-webhook';
 
 /** Import other modules */
 import sendReadReceipt from '../../helper/send-read-receipt';
-import testConfig from '../test-config';
+import { testConfig } from '../test-config';
 import fbId from '../util/fb-id';
 import locky, { closeLocky } from '../util/locky';
 
@@ -50,11 +50,7 @@ describe('send-read-receipt', async () => {
           recipient_id: expect.stringMatching(/\d{16}/i),
         },
       });
-
-      // return d;
     } catch (e) {
-      console.log(e);
-
       throw e;
     }
   });

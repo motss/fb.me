@@ -9,14 +9,9 @@ import { TestConfig } from '../test-config';
 
 /** Import project dependencies */
 import nock from 'nock';
-import querystring from 'querystring';
 
 /** Import other modules */
-import fbId from './fb-id';
-
-export function getRequestQuery<T extends NockRequestQuery>(uri: string): T {
-  return querystring.parse<T>((uri || '').replace(/.+\?(.+)$/i, '$1'));
-}
+import getReqQuery from './get-req-query';
 
 export async function meMessages(
   config: TestConfig
@@ -34,12 +29,15 @@ export async function meMessages(
         } = rb;
         const {
           access_token,
-        } = getRequestQuery(uri);
+        } = getReqQuery<NockRequestQuery>(uri);
 
         if (typeof (recipient && recipient.id) === 'undefined') {
           return [
             400,
-            'recipient[id] is undefined',
+            {
+              status: 400,
+              message: 'recipient[id] is undefined',
+            },
           ];
         }
 
@@ -71,7 +69,7 @@ export async function testFetchAsJson(
       .reply((uri) => {
         const {
           access_token,
-        } = getRequestQuery(uri);
+        } = getReqQuery<NockRequestQuery>(uri);
 
         const isOK = /^ok/i.test(access_token);
         const rs = isOK ? 200 : 400;

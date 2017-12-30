@@ -1,5 +1,11 @@
 // @ts-check
 
+/** Import typings */
+import { AppConfig } from '../lib/server';
+
+/** Import other modules */
+import fbId from './util/fb-id';
+
 export declare interface TestConfig {
   appFetchTimeout: number;
 
@@ -8,7 +14,6 @@ export declare interface TestConfig {
   fbPageAccessToken: string;
 }
 
-/** Import typings */
 export const testConfig: TestConfig = {
   appFetchTimeout: 9e3,
 
@@ -16,5 +21,15 @@ export const testConfig: TestConfig = {
   fbNotificationType: 'NO_PUSH',
   fbPageAccessToken: 'test-fb-page-access-token',
 };
+export const testAppConfig: AppConfig = {
+  ...testConfig,
+  fbAppId: fbId(16),
+  fbPageId: 'test-fb-page-id',
+  fbTypingDelay: 5e2,
+  fbVerifyToken: 'test-fb-verify-token',
+};
 
-export default testConfig;
+export default {
+  testConfig,
+  testAppConfig,
+};
