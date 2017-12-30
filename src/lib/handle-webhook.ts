@@ -1,7 +1,7 @@
 // @ts-check
 
 export declare interface WebhookResponseEntry {
-  messaging: FacebookMessageEvent[] | FacebookPostbackEvent[];
+  messaging: FacebookPostbackEvent[] | FacebookMessageEvent[];
 }
 export declare interface WebhookResponse {
   object: string | 'page';
@@ -27,7 +27,7 @@ import express from 'express';
 import handleReceiveMessage from './handle-receive-message';
 import handleReceivePostback from './handle-receive-postback';
 
-export function webhook(
+export function handleWebhook(
   appConfig: AppConfig
 ): express.Router {
   return express.Router({ mergeParams: true })
@@ -39,63 +39,52 @@ export function webhook(
       res.sendStatus(200);
 
       try {
+        if (!Object.keys(appConfig || {}).length) {
+          throw new TypeError('appConfig is undefined');
+        }
+
         const {
           object,
           entry,
         } = req.body;
 
         if (object === 'page') {
+          if (!Array.isArray(entry) || !entry.length) {
+            throw req.body;
+          }
           /**
            * Iterate over each entry and there might be multiple if batched.
            */
-
-          if (!Array.isArray(entry) || !entry.length) {
-            return entry;
-          }
-
           const allMessageEvents = await Promise.all(entry.map(async (pageEntry) => {
-            if (typeof (pageEntry && pageEntry.messaging) === 'undefined') {
+            if (!Object.keys(pageEntry || {}).length) {
               throw pageEntry;
             } else if (!Array.isArray(pageEntry.messaging) || !pageEntry.messaging.length) {
               throw pageEntry;
             }
 
             return Promise.all(pageEntry.messaging.map(async (messageEvent) => {
-              if (typeof messageEvent === 'undefined') {
-                throw messageEvent;
-              }
-
-              const {
-                message,
-                postback,
-              } = messageEvent;
-
-              if (typeof message !== 'undefined') {
+              if (typeof (messageEvent && messageEvent.message) !== 'undefined') {
                 return handleReceiveMessage(appConfig, messageEvent);
               }
 
-              if (typeof postback !== 'undefined') {
+              if (typeof (messageEvent && messageEvent.postback) !== 'undefined') {
                 return handleReceivePostback(appConfig, messageEvent);
               }
 
+              /** NOTE: Throw unknown message event */
               throw messageEvent;
             }));
           }));
 
-          return allMessageEvents;
+          throw allMessageEvents;
         }
 
-        /** NOTE: Run explicit GC. */
-        if (global.gc) {
-          global.gc();
-        }
-
-        /** NOTE: Return entire req[body] for debugging */
-        return req.body;
+        /** NOTE: Throw req[body] with unknown object */
+        throw req.body;
       } catch (e) {
         return next(e);
       }
     });
 }
 
-export default webhook;
+export default handleWebhook;
