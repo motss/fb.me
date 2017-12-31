@@ -18,14 +18,14 @@ export declare interface FacebookMessageEvent extends FacebookEvent {
 }
 
 /** Import typings */
+import { MessageflowConfig } from '../';
 import { FacebookEvent } from './handle-webhook';
-import { AppConfig } from './server';
 
 /** Import other modules */
 import sendReadReceipt from '../helper/send-read-receipt';
 
 export async function handleReceiveMessage(
-  appConfig: AppConfig,
+  appConfig: MessageflowConfig,
   event: FacebookMessageEvent
 ) {
   try {

@@ -9,14 +9,14 @@ export declare interface FacebookPostbackEvent extends FacebookEvent {
 }
 
 /** Import typings */
+import { MessageflowConfig } from '../';
 import { FacebookEvent } from './handle-webhook';
-import { AppConfig } from './server';
 
 /** Import other modules */
 import sendReadReceipt from '../helper/send-read-receipt';
 
 export async function handleReceivePostback(
-  appConfig: AppConfig,
+  appConfig: MessageflowConfig,
   event: FacebookPostbackEvent
 ) {
   try {

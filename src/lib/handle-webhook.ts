@@ -16,9 +16,9 @@ export declare interface FacebookEvent {
 }
 
 /** Import typings */
+import { MessageflowConfig } from '../';
 import { FacebookMessageEvent } from './handle-receive-message';
 import { FacebookPostbackEvent } from './handle-receive-postback';
-import { AppConfig } from './server';
 
 /** Import project dependencies */
 import express from 'express';
@@ -28,7 +28,7 @@ import handleReceiveMessage from './handle-receive-message';
 import handleReceivePostback from './handle-receive-postback';
 
 export function handleWebhook(
-  appConfig: AppConfig
+  appConfig: MessageflowConfig
 ): express.Router {
   return express.Router({ mergeParams: true })
     .post('/', async (req, res, next) => {

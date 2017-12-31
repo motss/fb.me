@@ -1,7 +1,7 @@
 // @ts-check
 
 /** Import typings */
-import { AppConfig } from '../lib/server';
+import { MessageflowConfig } from '../';
 
 /** Import other modules */
 import fbId from './util/fb-id';
@@ -21,7 +21,7 @@ export const testConfig: TestConfig = {
   fbNotificationType: 'NO_PUSH',
   fbPageAccessToken: 'test-fb-page-access-token',
 };
-export const testAppConfig: AppConfig = {
+export const testAppConfig: MessageflowConfig = {
   ...testConfig,
   fbAppId: fbId(16),
   fbPageId: 'test-fb-page-id',

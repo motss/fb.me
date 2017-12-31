@@ -10,16 +10,13 @@ import express from 'express';
 import rq from 'supertest';
 
 /** Import other modules */
+import handleReceiveMessage from '../../lib/handle-receive-message';
 import handleReceivePostback from '../../lib/handle-receive-postback';
 import handleWebhook from '../../lib/handle-webhook';
 import { testAppConfig } from '../test-config';
 import fbId from '../util/fb-id';
 
-// tslint:disable-next-line:no-var-requires
-const handleReceiveMessage = require('../../lib/handle-receive-message');
-// tslint:disable-next-line:no-var-requires
-// const handleReceivePostback = require('../../lib/handle-receive-postback');
-
+/** Mock functions with Jest */
 jest.mock('../../lib/handle-receive-message', () =>
   jest.fn((config, event) => ({
     config: config || { mockConfig: 1 },
@@ -35,10 +32,7 @@ describe('handle-webhook', async () => {
   const mockApp = express()
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
-    .use('/', handleWebhook(testAppConfig))
-    .use((err, req, res, next) => {
-      console.error('@ Fatal error', err);
-    });
+    .use('/', handleWebhook(testAppConfig));
   const mockMessagingMessage: FacebookMessageEvent = {
     sender: { id: fbId(16) },
     recipient: { id: fbId(16) },
@@ -173,11 +167,6 @@ describe('handle-webhook', async () => {
       throw e;
     }
   });
-
-  const ff = handleWebhook.toString().split(/\r?\n/);
-  console.log('#', ff[13]);
-  console.log('#', ff[14]);
-  console.log('#', ff[15]);
 
   test('object !== page', async () => {
     try {
