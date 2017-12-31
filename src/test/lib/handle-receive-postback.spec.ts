@@ -1,12 +1,12 @@
 // @ts-check
 
 /** Import typings */
+import { MessageflowConfig } from '../../';
 import {
   FacebookPostbackEvent,
   FacebookPostbackEventPostback,
 } from '../../lib/handle-receive-postback';
 import { FacebookEventId } from '../../lib/handle-webhook';
-import { AppConfig } from '../../lib/server';
 
 /** Import other modules */
 import handleReceivePostback from '../../lib/handle-receive-postback';
@@ -45,7 +45,7 @@ describe('handle-receive-postback', async () => {
     const mockEventPostback: FacebookPostbackEvent = {
       ...mockEvent,
     };
-    const mockConfig: AppConfig = {
+    const mockConfig: MessageflowConfig = {
       ...testAppConfig,
       onPostback: async (sender: FacebookEventId, postback: FacebookPostbackEventPostback) => {
         try {

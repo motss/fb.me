@@ -1,9 +1,9 @@
 // @ts-check
 
 /** Import typings */
+import { MessageflowConfig } from '../../';
 import { FacebookMessageEvent, MessagePayload } from '../../lib/handle-receive-message';
 import { FacebookEventId } from '../../lib/handle-webhook';
-import { AppConfig } from '../../lib/server';
 
 /** Import other modules */
 import handleReceiveMessage from '../../lib/handle-receive-message';
@@ -46,7 +46,7 @@ describe('handle-receive-message', async () => {
         text: 'ok-text',
       },
     };
-    const mockConfig: AppConfig = {
+    const mockConfig: MessageflowConfig = {
       ...testAppConfig,
       onMessage: async (sender: FacebookEventId, text: string) => {
         try {
@@ -117,7 +117,7 @@ describe('handle-receive-message', async () => {
         },
       },
     };
-    const mockConfig: AppConfig = {
+    const mockConfig: MessageflowConfig = {
       ...testAppConfig,
       fbPageAccessToken: 'ok-message-quick-reply',
       onQuickReply: async (sender: FacebookEventId, quickReply: MessagePayload) => {

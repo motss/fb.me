@@ -16,6 +16,8 @@
 [![NSP Status][nsp-badge]][nsp-url]
 
 [![Code of Conduct][coc-badge]][coc-url]
+[![Codecov][codecov-badge]][codecov-url]
+[![Coverage Status][coveralls-badge]][coveralls-url]
 
 [![codebeat-badge]][codebeat-url]
 [![codacy-badge]][codacy-url]
@@ -101,6 +103,8 @@ This methods works the same as `greeting(name)` except that this is the synchron
 [daviddm-badge]: https://img.shields.io/david/expressjs/express.svg?style=flat-square
 
 [coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
+[codecov-badge]: https://codecov.io/gh/motss/fb.me/branch/master/graph/badge.svg
+[coveralls-badge]: https://coveralls.io/repos/github/motss/fb.me/badge.svg?branch=master
 
 [codebeat-badge]: https://codebeat.co/badges/e486e791-12b7-4198-b834-0fa5bd04e1c3
 [codacy-badge]: https://api.codacy.com/project/badge/Grade/a70d1556b4e74711a162c4fd4dbb68a1
@@ -118,6 +122,8 @@ This methods works the same as `greeting(name)` except that this is the synchron
 [daviddm-url]: https://david-dm.org/motss/fb.me
 
 [coc-url]: https://github.com/motss/fb.me/blob/master/CODE_OF_CONDUCT.md
+[codecov-url]: https://codecov.io/gh/motss/fb.me
+[coveralls-url]: https://coveralls.io/github/motss/fb.me?branch=master
 
 [codebeat-url]: https://codebeat.co/projects/github-com-motss-fb.me-master
 [codacy-url]: https://www.codacy.com/app/motss/fb.me?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=motss/fb.me&amp;utm_campaign=Badge_Grade

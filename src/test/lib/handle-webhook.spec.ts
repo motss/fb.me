@@ -156,8 +156,7 @@ describe('handle-webhook', async () => {
   test('appConfig is undefined', async () => {
     try {
       const mockAppForTest = express()
-        .use('/', handleWebhook(undefined))
-        .use((err, req, res, next) => console.error('no app config', err));
+        .use('/', handleWebhook(undefined));
       const d = await rq(mockAppForTest)
         .post('/')
         .expect(200);
