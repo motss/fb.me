@@ -26,7 +26,7 @@ export function verifySetup(verifyToken: string): express.Router {
       }
 
       if (hubVerifyToken === verifyToken) {
-        return res.status(200).send(req.query);
+        return res.status(200).send(req.query['hub.challenge']);
       }
 
       /** NOTE: Send error with HTTP status 200 */
