@@ -64,11 +64,11 @@ export function handleWebhook(
             }
 
             return Promise.all(pageEntry.messaging.map(async (messageEvent) => {
-              if (typeof (messageEvent && messageEvent.message) !== 'undefined') {
+              if ((messageEvent && messageEvent.message) != null) {
                 return handleReceiveMessage(appConfig, messageEvent);
               }
 
-              if (typeof (messageEvent && messageEvent.postback) !== 'undefined') {
+              if ((messageEvent && messageEvent.postback) != null) {
                 return handleReceivePostback(appConfig, messageEvent);
               }
 
