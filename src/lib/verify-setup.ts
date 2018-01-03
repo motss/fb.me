@@ -7,30 +7,46 @@ export function verifySetup(verifyToken: string): express.Router {
   return express.Router({ mergeParams: true })
     .get('/', (req, res) => {
       if (typeof verifyToken !== 'string' || !verifyToken.length) {
-        throw res
-          .status(400)
-          .send({
-            status: 400,
-            message: 'verifyToken is invalid',
-          });
+        return res.status(400).send({
+          status: 400,
+          message: 'verifyToken is invalid',
+        });
       }
 
-      const hubVerifyToken = req.query['hub.verify_token'];
+      const reqQuery = req.query;
+      const hubVerifyToken = reqQuery['hub.verify_token'];
+      const hubMode = reqQuery['hub.mode'];
+      const hubChallenge = reqQuery['hub.challenge'];
 
-      if (typeof hubVerifyToken === 'undefined') {
-        return res
-          .status(400) .send({
-            status: 400,
-            message: 'hub.verify_token is missing',
-          });
+      if (hubMode == null) {
+        return res.status(400).send({
+          status: 400,
+          message: 'hub.mode is missing',
+        });
       }
 
-      if (hubVerifyToken === verifyToken) {
-        return res.status(200).send(req.query['hub.challenge']);
+      if (hubVerifyToken == null) {
+        return res.status(400).send({
+          status: 400,
+          message: 'hub.verify_token is missing',
+        });
       }
 
-      /** NOTE: Send error with HTTP status 200 */
-      return res.status(200).send('Error, wrong validation token');
+      if (hubChallenge == null) {
+        return res.status(400).send({
+          status: 400,
+          message: 'hub.challenge is missing',
+        });
+      }
+
+      if (/^subscribe/i.test(hubMode) && hubVerifyToken === verifyToken) {
+        console.info('WEBHOOK_VERIFIED');
+
+        return res.status(200).send(hubChallenge);
+      }
+
+      /** NOTE: Respond with '403 Forbidden' if verify tokens do not match */
+      return res.sendStatus(403);
     });
 }
 

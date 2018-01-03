@@ -29,10 +29,25 @@ describe('verify-setup', async () => {
     }
   });
 
-  test('no hub.verify_token', async () => {
+  test('no hub.mode', async () => {
     try {
       const d = await rq(mockApp)
         .get('/')
+        .expect(400);
+
+      expect(d.body).toEqual({
+        status: 400,
+        message: 'hub.mode is missing',
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  test('no hub.verify_token', async () => {
+    try {
+      const d = await rq(mockApp)
+        .get('/?hub.mode=subscribe')
         .expect(400);
 
       expect(d.body).toEqual({
@@ -44,56 +59,58 @@ describe('verify-setup', async () => {
     }
   });
 
-  test('verify tokens match', async () => {
+  test('no hub.challenge', async () => {
     try {
       const d = await rq(mockApp)
-        .get(`/?hub.verify_token=${mockFbVerifyToken}`)
-        .expect(200);
+        .get(`/?hub.mode=subscribe&hub.verify_token=${mockFbVerifyToken}`)
+        .expect(400);
 
       expect(d.body).toEqual({
-        'hub.verify_token': mockFbVerifyToken,
+        status: 400,
+        message: 'hub.challenge is missing',
       });
     } catch (e) {
       throw e;
     }
   });
 
-  test('verify token not match', async () => {
+  test('hub.mode !== subscribe', async () => {
     try {
       const d = await rq(mockApp)
-        .get('/?hub.verify_token=wrong-verify-token')
-        .expect(200);
+        .get(`/?hub.mode=unsubscribe&hub.verify_token=${
+          mockFbVerifyToken
+        }&hub.challenge=CHALLENGE_ACCEPTED`)
+        .expect(403);
 
-      expect(d.text).toEqual('Error, wrong validation token');
+      expect(d.text).toEqual('Forbidden');
     } catch (e) {
       throw e;
     }
   });
 
-  // test('Bad request', async () => {
-  //   try {
-  //     const d = await rq(mockApp)
-  //       .get(`/?hub.verify_token=bad-${mockFbVerifyToken}`)
-  //       .expect(200);
+  test('verify tokens do not match', async () => {
+    try {
+      const d = await rq(mockApp)
+        .get('/?hub.mode=subscribe&hub.verify_token=wrong-verify-token&hub.challenge=NOT_MATCH')
+        .expect(403);
 
-  //     expect(d.text).toEqual('Error, wrong validation token');
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.text).toEqual('Forbidden');
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  // test('Fail request', async () => {
-  //   try {
-  //     const d = await rq(mockApp)
-  //       .get('/')
-  //       .expect(400);
+  test('verify tokens match', async () => {
+    try {
+      const d = await rq(mockApp)
+        .get(`/?hub.mode=subscribe&hub.verify_token=${
+          mockFbVerifyToken
+        }&hub.challenge=CHALLENGE_ACCEPTED`)
+        .expect(200);
 
-  //     expect(d.body).toEqual({
-  //       status: 400,
-  //       message: 'hub.verify_token is missing',
-  //     });
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.text).toEqual('CHALLENGE_ACCEPTED');
+    } catch (e) {
+      throw e;
+    }
+  });
 });
