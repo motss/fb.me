@@ -34,17 +34,24 @@ export function handleWebhook(
     .post('/', async (req, res, next) => {
       try {
         if (!Object.keys(appConfig || {}).length) {
-          throw new TypeError('appConfig is undefined');
+          throw new TypeError('appConfig is invalid');
         }
 
-        const {
-          object,
-          entry,
-        } = req.body;
+        const reqBody = req.body;
+        const object = reqBody && reqBody.object;
+        const entry = reqBody && reqBody.entry;
 
-        if (object === 'page') {
+        if (object == null) {
+          throw new TypeError('req[body][object] is missing');
+        }
+
+        if (entry == null) {
+          throw new TypeError('req[body][entry] is missing');
+        }
+
+        if ('page' === object) {
           if (!Array.isArray(entry) || !entry.length) {
-            throw new Error('entry is not an array');
+            throw new TypeError('req[body][entry] is not an array');
           }
 
           /**
@@ -56,14 +63,22 @@ export function handleWebhook(
           /**
            * NOTE: Iterate over each entry and there might be multiple if batched.
            */
-          const allMessageEvents = await Promise.all(entry.map(async (pageEntry) => {
-            if (!Object.keys(pageEntry || {}).length) {
-              throw pageEntry;
-            } else if (!Array.isArray(pageEntry.messaging) || !pageEntry.messaging.length) {
-              throw pageEntry;
+          return await Promise.all(entry.map(async (pageEntry, i) => {
+            const messaging = pageEntry && pageEntry.messaging;
+
+            if (messaging == null) {
+              throw new TypeError(`req[body][entry][${i}][messaging] is missing`);
             }
 
-            return Promise.all(pageEntry.messaging.map(async (messageEvent) => {
+            if (!Array.isArray(messaging) || !messaging.length) {
+              throw new TypeError(`req[body][entry][${i}][messaging] is not an array`);
+            }
+
+            return Promise.all(messaging.map(async (messageEvent, ii) => {
+              if (messageEvent == null) {
+                throw new TypeError(`req[body][entry][${i}][messaging][${ii}] is missing`);
+              }
+
               if ((messageEvent && messageEvent.message) != null) {
                 return handleReceiveMessage(appConfig, messageEvent);
               }
@@ -71,20 +86,19 @@ export function handleWebhook(
               if ((messageEvent && messageEvent.postback) != null) {
                 return handleReceivePostback(appConfig, messageEvent);
               }
-
-              /** NOTE: Throw unknown message event */
-              throw messageEvent;
             }));
           }));
-
-          throw allMessageEvents;
         }
 
         /** NOTE: Returns a '404 Not Found' if event is not from a page subscription */
         return res.sendStatus(404);
       } catch (e) {
-        if (!res.headersSent) {
-          res.sendStatus(500);
+        /** NOTE: Assuming all are TypeErrors */
+        if (e instanceof TypeError && !res.headersSent) {
+          res.status(400).send({
+            status: 400,
+            message: e.message,
+          });
         }
 
         return next(e);
