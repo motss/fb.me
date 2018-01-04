@@ -1,10 +1,5 @@
 // @ts-check
 
-/** Import typings */
-import { FacebookMessageEvent } from '../../lib/handle-receive-message';
-import { FacebookPostbackEvent } from '../../lib/handle-receive-postback';
-import { WebhookResponse } from '../../lib/handle-webhook';
-
 /** Import project dependencies */
 import express from 'express';
 import rq from 'supertest';
@@ -12,9 +7,8 @@ import rq from 'supertest';
 /** Import other modules */
 import handleReceiveMessage from '../../lib/handle-receive-message';
 import handleReceivePostback from '../../lib/handle-receive-postback';
-import handleWebhook from '../../lib/handle-webhook';
+import handleWebhook, { postWebhook } from '../../lib/handle-webhook';
 import { testAppConfig } from '../test-config';
-import fbId from '../util/fb-id';
 
 /** Mock functions with Jest */
 jest.mock('../../lib/handle-receive-message', () =>
@@ -29,240 +23,304 @@ jest.mock('../../lib/handle-receive-postback', () =>
   })));
 
 describe('handle-webhook', async () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    jest.unmock('../../lib/handle-receive-message');
+  });
+
   const mockApp = express()
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
     .use('/', handleWebhook(testAppConfig));
-  const mockMessagingMessage: FacebookMessageEvent = {
-    sender: { id: fbId(16) },
-    recipient: { id: fbId(16) },
-    message: {
-      mid: fbId(16),
-      seq: +fbId(16),
-    },
-  };
-  const mockMessagingPostback: FacebookPostbackEvent = {
-    sender: { id: fbId(16) },
-    recipient: { id: fbId(16) },
-    postback: {
-      title: '',
-      payload: '',
-    },
+  const mockSend = jest.fn(d => d);
+  const mockRes = {
+    headersSent: true,
+    status: () => mockRes,
+    send: mockSend,
   };
 
-  // test('message[text]', async () => {
-  //   try {
-  //     const mockBody: WebhookResponse = {
-  //       object: 'page',
-  //       entry: [
-  //         {
-  //           messaging: [
-  //             {
-  //               ...mockMessagingMessage,
-  //               message: {
-  //                 ...mockMessagingMessage.message,
-  //                 text: 'mock-message-text',
-  //               },
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+  test('no appConfig', async () => {
+    try {
+      const mockAppForTest = express()
+        .use(express.json())
+        .use(express.urlencoded({ extended: false }))
+        .use('/', handleWebhook(null));
+      const d = await rq(mockAppForTest)
+        .post('/')
+        .send({ test: 'Hello, World!' })
+        .expect(400);
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //     expect(handleReceiveMessage)
-  //       .toHaveBeenCalledWith(
-  //         testAppConfig,
-  //         mockBody.entry[0].messaging[0]
-  //       );
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.body).toEqual({
+        status: 400,
+        message: 'appConfig is invalid',
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  // test('message[quick_reply]', async () => {
-  //   try {
-  //     const mockBody: WebhookResponse = {
-  //       object: 'page',
-  //       entry: [
-  //         {
-  //           messaging: [
-  //             {
-  //               ...mockMessagingMessage,
-  //               message: {
-  //                 ...mockMessagingMessage.message,
-  //                 quick_reply: {
-  //                   payload: 'mock-message-quick-reply',
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+  test('no req[body][object]', async () => {
+    try {
+      const d = await rq(mockApp)
+        .post('/')
+        .send({ test: 'Hello, World!' })
+        .expect(400);
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //     expect(handleReceiveMessage)
-  //       .toHaveBeenCalledWith(
-  //         testAppConfig,
-  //         mockBody.entry[0].messaging[0]
-  //       );
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.body).toEqual({
+        status: 400,
+        message: 'req[body][object] is missing',
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  // test('postback', async () => {
-  //   try {
-  //     const mockBody: WebhookResponse = {
-  //       object: 'page',
-  //       entry: [
-  //         {
-  //           messaging: [
-  //             {
-  //               ...mockMessagingPostback,
-  //               postback: {
-  //                 title: 'mock-postback-postback-title',
-  //                 payload: 'mock-postback-postback-payload',
-  //               },
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+  test('no req[body][entry]', async () => {
+    try {
+      const d = await rq(mockApp)
+        .post('/')
+        .send({ object: 'page' })
+        .expect(400);
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //     expect(handleReceivePostback).toHaveBeenCalledWith(
-  //       testAppConfig,
-  //       mockBody.entry[0].messaging[0]
-  //     );
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.body).toEqual({
+        status: 400,
+        message: 'req[body][entry] is missing',
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  // test('appConfig is undefined', async () => {
-  //   try {
-  //     const mockAppForTest = express()
-  //       .use('/', handleWebhook(undefined));
-  //     const d = await rq(mockAppForTest)
-  //       .post('/')
-  //       .expect(200);
+  test('object !== page', async () => {
+    try {
+      const d = await rq(mockApp)
+        .post('/')
+        .send({
+          object: 'not-page',
+          entry: 'entry',
+        })
+        .expect(404);
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.body).toEqual({
+        status: 404,
+        message: 'Unknown object (not-page)',
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  // test('object !== page', async () => {
-  //   try {
-  //     const mockBody = {
-  //       object: 'not-page',
-  //       entry: [],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+  test('entry is not an array', async () => {
+    try {
+      const d = await rq(mockApp)
+        .post('/')
+        .send({
+          object: 'page',
+          entry: 'not-an-array',
+        })
+        .expect(400);
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(d.body).toEqual({
+        status: 400,
+        message: 'req[body][entry] is not an array',
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  // test('entry is not an array', async () => {
-  //   try {
-  //     const mockBody = {
-  //       object: 'page',
-  //       entry: 'entry-not-array',
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+  test('no messaging in each entry', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              test: 'Hello, World!',
+            },
+          ],
+        },
+      };
+      await postWebhook(testAppConfig, mockReq as any, mockRes as any);
+    } catch (e) {
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(e instanceof TypeError).toEqual(true);
+      expect(e.message).toEqual('req[body][entry][0][messaging] is missing');
+    }
+  });
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+  test('messaging is not an array in each entry', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              messaging: 'not-an-array',
+            },
+          ],
+        },
+      };
+      await postWebhook(testAppConfig, mockReq as any, mockRes as any);
+    } catch (e) {
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(e instanceof TypeError).toEqual(true);
+      expect(e.message).toEqual('req[body][entry][0][messaging] is not an array');
+    }
+  });
 
-  // test('pageEntry is undefined', async () => {
-  //   try {
-  //     const mockBody = {
-  //       object: 'page',
-  //       entry: [
-  //         undefined,
-  //         undefined,
-  //       ],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+  test('no messageEvent in each entry', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              messaging: [
+                null,
+                null,
+              ],
+            },
+          ],
+        },
+      };
+      await postWebhook(testAppConfig, mockReq as any, mockRes as any);
+    } catch (e) {
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(e instanceof TypeError).toEqual(true);
+      expect(e.message).toEqual('req[body][entry][0][messaging][0] is missing');
+    }
+  });
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+  test('OK, neither message nor postback', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              messaging: [
+                {
+                  test: 'Hello, World!',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const d = await postWebhook(testAppConfig, mockReq as any, mockRes as any);
 
-  // test('pageEntry.message is not an array', async () => {
-  //   try {
-  //     const mockBody = {
-  //       object: 'page',
-  //       entry: [
-  //         {
-  //           messaging: 'messaging-not-array',
-  //         },
-  //       ],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(d).toEqual([
+        {
+          test: 'Hello, World!',
+        },
+      ]);
+    } catch (e) {
+      throw e;
+    }
+  });
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+  test('OK message[text]', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              messaging: [
+                {
+                  message: {
+                    text: 'Hello, World!',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
 
-  // test('messageEvent is undefined', async () => {
-  //   try {
-  //     const mockBody = {
-  //       object: 'page',
-  //       entry: [
-  //         {
-  //           messaging: [
-  //             { mock: 1 },
-  //             { mock: 2 },
-  //           ],
-  //         },
-  //       ],
-  //     };
-  //     const d = await rq(mockApp)
-  //       .post('/')
-  //       .send(mockBody)
-  //       .expect(200);
+      await postWebhook(testAppConfig, mockReq as any, mockRes as any);
 
-  //     expect(d.text).toMatch(/^ok/i);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // });
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(handleReceiveMessage).toHaveBeenCalledWith(testAppConfig, {
+        message: {
+          text: 'Hello, World!',
+        },
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  test('OK message[quick_reply]', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              messaging: [
+                {
+                  message: {
+                    quick_reply: {
+                      payload: 'Hello, World!',
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      await postWebhook(testAppConfig, mockReq as any, mockRes as any);
+
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(handleReceiveMessage).toHaveBeenCalledWith(testAppConfig, {
+        message: {
+          quick_reply: {
+            payload: 'Hello, World!',
+          },
+        },
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  test('OK message[postback]', async () => {
+    try {
+      const mockReq = {
+        body: {
+          object: 'page',
+          entry: [
+            {
+              messaging: [
+                {
+                  postback: {
+                    title: 'Greeting',
+                    payload: 'Hello, World!',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      await postWebhook(testAppConfig, mockReq as any, mockRes as any);
+
+      expect(mockSend).toHaveBeenCalledWith('EVENT_RECEIVED');
+      expect(handleReceivePostback).toHaveBeenCalledWith(testAppConfig, {
+        postback: {
+          title: 'Greeting',
+          payload: 'Hello, World!',
+        },
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
 });
