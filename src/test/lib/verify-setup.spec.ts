@@ -82,7 +82,10 @@ describe('verify-setup', async () => {
         }&hub.challenge=CHALLENGE_ACCEPTED`)
         .expect(403);
 
-      expect(d.text).toEqual('Forbidden');
+      expect(d.body).toEqual({
+        status: 403,
+        message: 'Forbidden',
+      });
     } catch (e) {
       throw e;
     }
@@ -94,7 +97,10 @@ describe('verify-setup', async () => {
         .get('/?hub.mode=subscribe&hub.verify_token=wrong-verify-token&hub.challenge=NOT_MATCH')
         .expect(403);
 
-      expect(d.text).toEqual('Forbidden');
+      expect(d.body).toEqual({
+        status: 403,
+        message: 'Forbidden',
+      });
     } catch (e) {
       throw e;
     }

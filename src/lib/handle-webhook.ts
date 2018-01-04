@@ -108,16 +108,17 @@ export function handleWebhook(
 
         return await postWebhook(appConfig, req, res);
       } catch (e) {
-        /** NOTE: Assuming headers are not sent yet */
-        if (e instanceof TypeError) {
-          res.status(400).send({
-            status: 400,
-            message: e.message,
-          });
-        } else {
-          /** NOTE: Returns a '404 Not Found' if event is not from a page subscription */
-          res.sendStatus(404);
-        }
+        /**
+         * NOTE:
+         * Assuming headers are not sent yet,
+         * - returns '400 Bad Request' for all TypeErrors.
+         * - returns a '404 Not Found' if event is not from a page subscription.
+         */
+        const rs = e instanceof TypeError ? 400 : 404;
+        res.status(rs).send({
+          status: rs,
+          message: e.message,
+        });
 
         return next(e);
       }
