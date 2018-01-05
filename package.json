@@ -34,8 +34,7 @@
   },
   "dependencies": {
     "express": "^4.16.2",
-    "make-fetch-happen": "^2.6.0",
-    "whitelister": "0.0.5"
+    "make-fetch-happen": "^2.6.0"
   },
   "devDependencies": {
     "@std/esm": "^0.18.0",
@@ -45,7 +44,6 @@
     "@types/node": "^8.5.2",
     "@types/node-fetch": "^1.6.7",
     "babel-cli": "^6.26.0",
-    "babel-plugin-transform-function-bind": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",

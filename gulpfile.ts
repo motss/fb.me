@@ -43,7 +43,6 @@ const BABELRC = {
     ] : []),
   ],
   plugins: [
-    'transform-function-bind',
     ['transform-object-rest-spread', { useBuiltIns: true }],
   ],
   ignore: isProd
