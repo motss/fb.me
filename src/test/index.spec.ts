@@ -35,7 +35,7 @@ describe('index', async () => {
 
       expect(d.body).toEqual({
         status: 400,
-        message: 'hub.verify_token is missing',
+        message: 'hub.mode is missing',
       });
     } catch (e) {
       throw e;
@@ -46,9 +46,12 @@ describe('index', async () => {
     try {
       const d = await rq(mockApp)
         .post('/')
-        .expect(200);
+        .expect(400);
 
-      expect(d.text).toMatch(/^ok/i);
+      expect(d.body).toEqual({
+        status: 400,
+        message: 'req[body][object] is missing',
+      });
     } catch (e) {
       throw e;
     }

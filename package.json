@@ -123,6 +123,9 @@
     ],
     "verbose": true,
     "bail": true,
+    "rootDirs": [
+      "<rootDir>/src/"
+    ],
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },

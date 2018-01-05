@@ -40,74 +40,77 @@ afterAll(async () => {
   }
 });
 
-describe('handle-receive-postback', async () => {
-  describe('postback', async () => {
-    const mockEventPostback: FacebookPostbackEvent = {
-      ...mockEvent,
-    };
-    const mockConfig: MessageflowConfig = {
-      ...testAppConfig,
-      onPostback: async (sender: FacebookEventId, postback: FacebookPostbackEventPostback) => {
+describe('lib', () => {
+  describe('handle-receive-postback', async () => {
+    describe('postback', async () => {
+      const mockEventPostback: FacebookPostbackEvent = {
+        ...mockEvent,
+      };
+      const mockConfig: MessageflowConfig = {
+        ...testAppConfig,
+        onPostback: async (sender: FacebookEventId, postback: FacebookPostbackEventPostback) => {
+          try {
+            /** NOTE: Return inputs */
+            return {
+              sender,
+              postback,
+            };
+          } catch (e) {
+            throw e;
+          }
+        },
+      };
+
+      test('OK response', async () => {
         try {
-          /** NOTE: Return inputs */
-          return {
-            sender,
-            postback,
-          };
+          expect.assertions(1);
+
+          const d = await handleReceivePostback({
+            ...mockConfig,
+            fbPageAccessToken: 'ok-message-postback',
+          }, mockEventPostback);
+
+          expect(d).toEqual({
+            sender: {
+              id: expect.stringMatching(/\d{16}/i),
+            },
+            postback: {
+              title: expect.stringMatching(/^mock-postback-title/i),
+              payload: expect.stringMatching(/^mock-postback-payload/i),
+            },
+          });
         } catch (e) {
           throw e;
         }
-      },
-    };
+      });
 
-    test('OK response', async () => {
-      try {
-        expect.assertions(1);
+      test('Bad response', async () => {
+        try {
+          expect.assertions(2);
 
-        const d = await handleReceivePostback({
-          ...mockConfig,
-          fbPageAccessToken: 'ok-message-postback',
-        }, mockEventPostback);
+          const d = await handleReceivePostback({
+            ...mockConfig,
+            fbPageAccessToken: 'bad-message-postback',
+          }, null);
 
-        expect(d).toEqual({
-          sender: {
-            id: expect.stringMatching(/\d{16}/i),
-          },
-          postback: {
-            title: expect.stringMatching(/^mock-postback-title/i),
-            payload: expect.stringMatching(/^mock-postback-payload/i),
-          },
-        });
-      } catch (e) {
-        throw e;
-      }
+          expect(d.sender).toEqual(undefined);
+          expect(d.postback).toEqual(undefined);
+        } catch (e) {
+          throw e;
+        }
+      });
+
+      test('Fail request', async () => {
+        try {
+          expect.assertions(2);
+
+          await handleReceivePostback(null, null);
+        } catch (e) {
+          expect(e instanceof TypeError).toEqual(true);
+          expect(e.message).toEqual('Only absolute URLs are supported');
+        }
+      });
     });
 
-    test('Bad response', async () => {
-      try {
-        expect.assertions(2);
-
-        const d = await handleReceivePostback({
-          ...mockConfig,
-          fbPageAccessToken: 'bad-message-postback',
-        }, null);
-
-        expect(d.sender).toEqual(undefined);
-        expect(d.postback).toEqual(undefined);
-      } catch (e) {
-        throw e;
-      }
-    });
-
-    test('Fail request', async () => {
-      try {
-        expect.assertions(2);
-
-        await handleReceivePostback(null, null);
-      } catch (e) {
-        expect(e instanceof TypeError).toEqual(true);
-        expect(e.message).toEqual('Only absolute URLs are supported');
-      }
-    });
   });
 });
