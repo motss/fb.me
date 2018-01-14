@@ -6,9 +6,11 @@ import express from 'express';
 /** Import other modules */
 import rq from 'supertest';
 import verifySetup, { getVerifySetup } from '../../lib/verify-setup';
+import fbId from '../util/fb-id';
 
 describe('lib', () => {
   describe('verify-setup', async () => {
+    const mockFbChallenge = fbId(10);
     const mockFbVerifyToken = 'mock-fb-verify-token';
     const mockApp = express()
       .use('/', verifySetup(mockFbVerifyToken));
@@ -98,13 +100,13 @@ describe('lib', () => {
           query: {
             'hub.mode': 'subscribe',
             'hub.verify_token': mockFbVerifyToken,
-            'hub.challenge': 'CHALLENGE_ACCEPTED',
+            'hub.challenge': mockFbChallenge,
           },
         };
         const d = await getVerifySetup(mockFbVerifyToken, mockReq as any, mockRes as any);
 
-        expect(d).toEqual('CHALLENGE_ACCEPTED');
-        expect(mockSend).toHaveBeenCalledWith('CHALLENGE_ACCEPTED');
+        expect(d).toEqual(mockFbChallenge);
+        expect(mockSend).toHaveBeenCalledWith(mockFbChallenge);
       } catch (e) {
         throw e;
       }
@@ -117,11 +119,11 @@ describe('lib', () => {
           .query({
             'hub.mode': 'subscribe',
             'hub.verify_token': mockFbVerifyToken,
-            'hub.challenge': 'CHALLENGE_ACCEPTED',
+            'hub.challenge': mockFbChallenge,
           })
           .expect(200);
 
-        expect(d.text).toEqual('CHALLENGE_ACCEPTED');
+        expect(d.text).toEqual(mockFbChallenge);
       } catch (e) {
         throw e;
       }
@@ -134,7 +136,7 @@ describe('lib', () => {
           .query({
             'hub.mode': 'subscribe',
             'hub.verify_token': 'test',
-            'hub.challenge': 'CHALLENGE_ACCEPTED',
+            'hub.challenge': mockFbChallenge,
           })
           .expect(403);
 

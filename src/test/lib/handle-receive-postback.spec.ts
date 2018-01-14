@@ -15,6 +15,30 @@ import fbId from '../util/fb-id';
 import locky, { closeLocky } from '../util/locky';
 
 /** Setting up */
+// const mockReqBody = {
+//   object: 'page',
+//   entry: [
+//     {
+//       id: fbId(15),
+//       time: +new Date(),
+//       messaging: [
+//         {
+//           sender: {
+//             id: fbId(15),
+//           },
+//           recipient: {
+//             id: fbId(15), /** Same as entry[id] */
+//           },
+//           timestamp: +new Date(),
+//           postback: {
+//             payload: 'random payload',
+//             title: 'Payload title',
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// };
 const mockEvent: FacebookPostbackEvent = {
   postback: {
     title: 'mock-postback-title',

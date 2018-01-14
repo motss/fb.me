@@ -29,6 +29,9 @@ afterEach(async () => {
 
 describe('helper', () => {
   describe('send-read-receipt', async () => {
+    // const mockResponse = {
+    //   recipient_id: fbId(16),
+    // };
     // FIXME: await fbId will destroy the whole test suite!!! Why Jest!
     const recipient: FacebookEventId = {
       id: fbId(16),
@@ -47,7 +50,6 @@ describe('helper', () => {
         expect(d).toEqual({
           status: expect.any(Number),
           data: {
-            status: expect.any(Number),
             recipient_id: expect.stringMatching(/\d{16}/i),
           },
         });
@@ -69,8 +71,31 @@ describe('helper', () => {
         expect(d).toEqual({
           status: expect.any(Number),
           data: {
-            status: expect.any(Number),
             recipient_id: expect.stringMatching(/\d{16}/i),
+          },
+        });
+      } catch (e) {
+        throw e;
+      }
+    });
+
+    test('No recipient error', async () => {
+      try {
+        expect.assertions(2);
+
+        const d = await sendReadReceipt(null, {
+          ...testConfig,
+          fbPageAccessToken: 'bad-read-recipient',
+        });
+
+        expect(d.status).toBeGreaterThan(399);
+        expect(d).toEqual({
+          status: 400,
+          data: {
+            code: 100,
+            fbtrace_id: expect.stringMatching(/\d{11}/i),
+            message: '(#100) The parameter recipient is required',
+            type: 'OAuthException',
           },
         });
       } catch (e) {

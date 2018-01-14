@@ -12,6 +12,36 @@ import fbId from '../util/fb-id';
 import locky, { closeLocky } from '../util/locky';
 
 /** Setting up */
+// const mockReqBody = {
+//   object: 'page',
+//   entry: [
+//     {
+//       id: fbId(15),
+//       time: +new Date(),
+//       messaging: [
+//         {
+//           sender: {
+//             id: fbId(15),
+//           },
+//           recipient: {
+//             id: fbId(15), /** Same as entry[id] */
+//           },
+//           timestamp: +new Date(),
+//           message: {
+//             mid: 'mid.$cAAIwd39I0sNnJYgb2lg9ELTYYqWT',
+//             seq: 89498,
+//             text: 'hello, world!',
+
+//             /** Quick reply has this */
+//             quick_reply: {
+//               payload: 'random payload',
+//             },
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// };
 const mockEvent: FacebookMessageEvent = {
   message: {
     mid: fbId(16),

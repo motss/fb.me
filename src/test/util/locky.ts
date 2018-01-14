@@ -11,6 +11,7 @@ import { TestConfig } from '../test-config';
 import nock from 'nock';
 
 /** Import other modules */
+import fbId from './fb-id';
 import getReqQuery from './get-req-query';
 
 export async function meMessages(
@@ -31,12 +32,14 @@ export async function meMessages(
           access_token,
         } = getReqQuery<NockRequestQuery>(uri);
 
-        if (typeof (recipient && recipient.id) === 'undefined') {
+        if ((recipient && recipient.id) == null) {
           return [
             400,
             {
-              status: 400,
-              message: 'recipient[id] is undefined',
+              code: 100,
+              fbtrace_id: fbId(11),
+              message: '(#100) The parameter recipient is required',
+              type: 'OAuthException',
             },
           ];
         }
@@ -46,7 +49,6 @@ export async function meMessages(
 
         return [
           rs, {
-            status: rs,
             recipient_id: recipient.id,
           },
         ];
