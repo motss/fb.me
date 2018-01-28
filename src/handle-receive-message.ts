@@ -28,7 +28,7 @@ import sendAsReadReceipt from '@messageflow/send-as/send-as-read-receipt';
 export async function handleReceiveMessage(
   appConfig: MessageflowConfig,
   event: FacebookMessageEvent,
-  options: RequestInit = {}
+  options?: RequestInit
 ) {
   try {
     const {

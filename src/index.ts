@@ -18,6 +18,7 @@ export declare interface MessageflowConfig extends MessageflowHandlers {
 }
 
 /** Import typings */
+import { RequestInit } from 'node-fetch';
 import { MessagePayload } from './handle-receive-message';
 import { FacebookPostbackEventPostback } from './handle-receive-postback';
 import { FacebookEventId } from './handle-webhook';
@@ -30,11 +31,12 @@ import handleWebhook from './handle-webhook';
 import verifySetup from './verify-setup';
 
 export function messageflow(
-  config: MessageflowConfig = {} as MessageflowConfig
+  config: MessageflowConfig = {} as MessageflowConfig,
+  options?: RequestInit
 ): express.Application {
   return express()
     .get('/', verifySetup(config.verifyToken))
-    .post('/', handleWebhook(config));
+    .post('/', handleWebhook(config, options));
 }
 
 export default messageflow;

@@ -16,6 +16,7 @@ export declare interface FacebookEvent {
 }
 
 /** Import typings */
+import { RequestInit } from 'node-fetch';
 import { MessageflowConfig } from './';
 import { FacebookMessageEvent } from './handle-receive-message';
 import { FacebookPostbackEvent } from './handle-receive-postback';
@@ -29,6 +30,7 @@ import handleReceivePostback from './handle-receive-postback';
 
 export async function postWebhook(
   config: MessageflowConfig,
+  options: RequestInit = {} as RequestInit,
   req: express.Request,
   res: express.Response
 ): Promise<express.Response | any[]> {
@@ -76,11 +78,11 @@ export async function postWebhook(
           }
 
           if ((messageEvent && messageEvent.message) != null) {
-            return handleReceiveMessage(config, messageEvent);
+            return handleReceiveMessage(config, messageEvent, options);
           }
 
           if ((messageEvent && messageEvent.postback) != null) {
-            return handleReceivePostback(config, messageEvent);
+            return handleReceivePostback(config, messageEvent, options);
           }
 
           return messageEvent;
@@ -97,7 +99,8 @@ export async function postWebhook(
 }
 
 export function handleWebhook(
-  appConfig: MessageflowConfig
+  appConfig: MessageflowConfig = {} as MessageflowConfig,
+  options?: RequestInit
 ): express.Router {
   return express.Router({ mergeParams: true })
     .post('/', async (req, res, next) => {
@@ -106,7 +109,7 @@ export function handleWebhook(
           throw new TypeError('appConfig is invalid');
         }
 
-        return await postWebhook(appConfig, req, res);
+        return await postWebhook(appConfig, options, req, res);
       } catch (e) {
         /**
          * NOTE:

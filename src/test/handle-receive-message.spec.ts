@@ -1,9 +1,7 @@
 // @ts-check
 
 /** Import typings */
-import { MessageflowConfig } from '../';
-import { FacebookMessageEvent, MessagePayload } from '../handle-receive-message';
-import { FacebookEventId } from '../handle-webhook';
+import { FacebookMessageEvent } from '../handle-receive-message';
 
 /** Import other modules */
 import handleReceiveMessage from '../handle-receive-message';

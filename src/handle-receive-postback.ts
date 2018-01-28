@@ -17,9 +17,9 @@ import { FacebookEvent } from './handle-webhook';
 import sendReadReceipt from '@messageflow/send-as/send-as-read-receipt';
 
 export async function handleReceivePostback(
-  appConfig: MessageflowConfig,
+  appConfig: MessageflowConfig = {} as MessageflowConfig,
   event: FacebookPostbackEvent,
-  options: RequestInit = {}
+  options?: RequestInit
 ) {
   try {
     const {
@@ -34,11 +34,19 @@ export async function handleReceivePostback(
      */
     await sendReadReceipt({
       options,
-      url: appConfig.url,
+      url: `${appConfig.url}?access_token=${appConfig.pageAccessToken}`,
       recipient: sender,
     });
 
-    return await appConfig.onPostback(sender, postback);
+    if (postback == null) {
+      throw new TypeError('postbackEvent is undefined');
+    }
+
+    const onPostbackHandler = typeof appConfig.onPostback === 'function'
+      ? appConfig.onPostback
+      : () => { throw new TypeError('onPostback is not a function'); };
+
+    return await onPostbackHandler(sender, postback);
   } catch (e) {
     throw e;
   }
