@@ -7,26 +7,26 @@ import { MessageflowConfig } from '../../';
 import fbId from './fb-id';
 
 export declare interface TestConfig {
-  appFetchTimeout: number;
+  fetchTimeout: number;
 
-  fbGraphUrl: string;
-  fbNotificationType: string;
-  fbPageAccessToken: string;
+  url: string;
+  notificationType: string;
+  pageAccessToken: string;
 }
 
 export const testConfig: TestConfig = {
-  appFetchTimeout: 9e3,
+  fetchTimeout: 9e3,
 
-  fbGraphUrl: 'http://localhost:5353',
-  fbNotificationType: 'NO_PUSH',
-  fbPageAccessToken: 'test-fb-page-access-token',
+  url: 'http://localhost:5353/me/messages',
+  notificationType: 'NO_PUSH',
+  pageAccessToken: 'test-fb-page-access-token',
 };
 export const testAppConfig: MessageflowConfig = {
   ...testConfig,
-  fbAppId: fbId(16),
-  fbPageId: 'test-fb-page-id',
-  fbTypingDelay: 5e2,
-  fbVerifyToken: 'test-fb-verify-token',
+  appId: fbId(16),
+  pageId: 'test-fb-page-id',
+  typingDelay: 5e2,
+  verifyToken: 'test-fb-verify-token',
 };
 
 export default {

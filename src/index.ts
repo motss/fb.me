@@ -5,27 +5,16 @@ export interface MessageflowHandlers {
   onQuickReply?(sender: FacebookEventId, quickReply: MessagePayload): Promise<any>;
   onPostback?(sender: FacebookEventId, postback: FacebookPostbackEventPostback): Promise<any>;
 }
-export declare interface MessageflowParams extends MessageflowHandlers {
-  fetchTimeout: number;
-
-  pageId: string;
-  appId: string;
-  graphUrl: string;
-  verifyToken: string;
-  pageAccessToken: string;
-  notificationType: string;
-  typingDelay: number;
-}
 export declare interface MessageflowConfig extends MessageflowHandlers {
-  appFetchTimeout: number;
+  appId: string;
+  pageAccessToken: string;
+  pageId: string;
+  url: string;
+  verifyToken: string;
 
-  fbPageId: string;
-  fbAppId: string;
-  fbGraphUrl: string;
-  fbVerifyToken: string;
-  fbPageAccessToken: string;
-  fbNotificationType: string;
-  fbTypingDelay: number;
+  fetchTimeout?: number;
+  notificationType?: string;
+  typingDelay?: number;
 }
 
 /** Import typings */
@@ -40,40 +29,11 @@ import express from 'express';
 import handleWebhook from './handle-webhook';
 import verifySetup from './verify-setup';
 
-export function messageflow({
-  fetchTimeout,
-
-  verifyToken,
-  pageId,
-  appId,
-  graphUrl,
-  notificationType,
-  pageAccessToken,
-  typingDelay,
-
-  onMessage,
-  onQuickReply,
-  onPostback,
-}: MessageflowParams): express.Application {
-  // TODO: Use whitelister here.
-  const config: MessageflowConfig = {
-    onMessage,
-    onQuickReply,
-    onPostback,
-
-    appFetchTimeout: +fetchTimeout,
-
-    fbVerifyToken: verifyToken,
-    fbPageId: pageId,
-    fbAppId: appId,
-    fbGraphUrl: graphUrl,
-    fbNotificationType: notificationType,
-    fbPageAccessToken: pageAccessToken,
-    fbTypingDelay: +typingDelay,
-  };
-
+export function messageflow(
+  config: MessageflowConfig = {} as MessageflowConfig
+): express.Application {
   return express()
-    .get('/', verifySetup(verifyToken))
+    .get('/', verifySetup(config.verifyToken))
     .post('/', handleWebhook(config));
 }
 

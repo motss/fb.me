@@ -34,7 +34,7 @@ export async function handleReceivePostback(
      */
     await sendReadReceipt({
       options,
-      url: appConfig.fbGraphUrl,
+      url: appConfig.url,
       recipient: sender,
     });
 

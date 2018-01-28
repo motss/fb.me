@@ -28,7 +28,7 @@ import handleReceiveMessage from './handle-receive-message';
 import handleReceivePostback from './handle-receive-postback';
 
 export async function postWebhook(
-  appConfig: MessageflowConfig,
+  config: MessageflowConfig,
   req: express.Request,
   res: express.Response
 ): Promise<express.Response | any[]> {
@@ -76,11 +76,11 @@ export async function postWebhook(
           }
 
           if ((messageEvent && messageEvent.message) != null) {
-            return handleReceiveMessage(appConfig, messageEvent);
+            return handleReceiveMessage(config, messageEvent);
           }
 
           if ((messageEvent && messageEvent.postback) != null) {
-            return handleReceivePostback(appConfig, messageEvent);
+            return handleReceivePostback(config, messageEvent);
           }
 
           return messageEvent;

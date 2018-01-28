@@ -49,7 +49,7 @@ export async function handleReceiveMessage(
      */
     await sendAsReadReceipt({
       options,
-      url: appConfig.fbGraphUrl,
+      url: `${appConfig.url}?access_token=${appConfig.pageAccessToken}`,
       recipient: sender,
     });
 
@@ -57,9 +57,16 @@ export async function handleReceiveMessage(
       throw new TypeError('messageEvent is undefined');
     }
 
+    const onMessageHandler = typeof appConfig.onMessage === 'function'
+      ? appConfig.onMessage
+      : () => { throw new TypeError('onMessage is not a function'); };
+    const onQuickReplyHandler = typeof appConfig.onQuickReply === 'function'
+      ? appConfig.onQuickReply
+      : () => { throw new TypeError('onQuickReply is not a function'); };
+
     return hasQuickReply
-      ? await appConfig.onQuickReply(sender, message.quick_reply)
-      : await appConfig.onMessage(sender, message.text);
+      ? await onQuickReplyHandler(sender, message.quick_reply)
+      : await onMessageHandler(sender, message.text);
   } catch (e) {
     throw e;
   }
