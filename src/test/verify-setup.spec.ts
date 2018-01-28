@@ -27,8 +27,9 @@ describe('verify-setup', () => {
         .expect(400);
 
       expect(d.body).toEqual({
-        status: 400,
-        message: 'verifyToken is invalid',
+        error: {
+          message: 'verifyToken is invalid',
+        },
       });
     } catch (e) {
       throw e;
@@ -103,8 +104,9 @@ describe('verify-setup', () => {
         .expect(403);
 
       expect(d.body).toEqual({
-        status: 403,
-        message: 'Forbidden',
+        error: {
+          message: 'Forbidden',
+        },
       });
     } catch (e) {
       throw e;

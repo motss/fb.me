@@ -55,9 +55,11 @@ export function verifySetup(verifyToken: string): express.Router {
          * - responds with '403 Forbidden' if verify tokens do not match.
          */
         const rs = e instanceof TypeError ? 400 : 403;
+
         res.status(rs).send({
-          status: rs,
-          message: e.message,
+          error: {
+            message: e.message,
+          },
         });
 
         return next(e);

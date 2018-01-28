@@ -1,7 +1,7 @@
 // @ts-check
 
 /** Import typings */
-import { MessageflowParams } from '../';
+import { MessageflowConfig } from '../';
 
 /** Import project dependencies */
 import express from 'express';
@@ -12,20 +12,37 @@ import messageflow from '../';
 import { testAppConfig } from './helper/test-config';
 
 describe('index', async () => {
-  const config: MessageflowParams = {
+  const config: MessageflowConfig = {
     appId: testAppConfig.fbAppId,
-    fetchTimeout: testAppConfig.appFetchTimeout,
-    graphUrl: testAppConfig.fbGraphUrl,
-    notificationType: testAppConfig.fbNotificationType,
     pageAccessToken: testAppConfig.fbPageAccessToken,
     pageId: testAppConfig.fbPageId,
-    typingDelay: testAppConfig.fbTypingDelay,
+    url: testAppConfig.fbGraphUrl,
     verifyToken: testAppConfig.fbVerifyToken,
+
+    fetchTimeout: testAppConfig.appFetchTimeout,
+    notificationType: testAppConfig.fbNotificationType,
+    typingDelay: testAppConfig.fbTypingDelay,
   };
   const mockApp = express()
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
     .use('/', messageflow(config));
+
+  test('nullish config fallback to {}', async () => {
+    try {
+      const d = await rq(express().use('/', messageflow()))
+        .get('/')
+        .expect(400);
+
+      expect(d.body).toEqual({
+        error: {
+          message: 'verifyToken is invalid',
+        },
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
 
   test('verifySetup has been called', async () => {
     try {
@@ -34,8 +51,9 @@ describe('index', async () => {
         .expect(400);
 
       expect(d.body).toEqual({
-        status: 400,
-        message: 'hub.mode is missing',
+        error: {
+          message: 'verifyToken is invalid',
+        },
       });
     } catch (e) {
       throw e;
@@ -56,4 +74,5 @@ describe('index', async () => {
       throw e;
     }
   });
+
 });
