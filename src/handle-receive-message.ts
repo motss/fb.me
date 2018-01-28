@@ -31,8 +31,17 @@ export async function handleReceiveMessage(
   options?: RequestInit
 ) {
   try {
-    if (appConfig == null) {
-      throw new TypeError('appConfig is undefined');
+    const {
+      url,
+      pageAccessToken,
+    } = appConfig || {} as MessageflowConfig;
+
+    if (typeof url !== 'string' || !url.length) {
+      throw new TypeError('url is invalid');
+    }
+
+    if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
+      throw new TypeError('pageAccessToken is invalid');
     }
 
     const {
@@ -53,7 +62,7 @@ export async function handleReceiveMessage(
      */
     await sendAsReadReceipt({
       options,
-      url: `${appConfig.url}?access_token=${appConfig.pageAccessToken}`,
+      url: `${url}?access_token=${pageAccessToken}`,
       recipient: sender,
     });
 

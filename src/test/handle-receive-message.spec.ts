@@ -67,12 +67,27 @@ describe('handle-receive-message', () => {
     recipient: { id: fbId(16) },
   };
 
-  test('appConfig is undefined', async () => {
+  test('url is invalid', async () => {
     try {
       await handleReceiveMessage(null, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('appConfig is undefined');
+      expect(e.message).toEqual('url is invalid');
+    }
+  });
+
+  test('pageAccessToken is invalid', async () => {
+    try {
+      await handleReceiveMessage({
+        appId: null,
+        pageAccessToken: null,
+        pageId: null,
+        url: 'https://test-url/test-url',
+        verifyToken: null,
+      }, null);
+    } catch (e) {
+      expect(e instanceof TypeError).toBe(true);
+      expect(e.message).toEqual('pageAccessToken is invalid');
     }
   });
 
