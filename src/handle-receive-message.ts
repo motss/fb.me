@@ -31,6 +31,10 @@ export async function handleReceiveMessage(
   options?: RequestInit
 ) {
   try {
+    if (appConfig == null) {
+      throw new TypeError('appConfig is undefined');
+    }
+
     const {
       sender,
       message,

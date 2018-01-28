@@ -67,6 +67,15 @@ describe('handle-receive-message', () => {
     recipient: { id: fbId(16) },
   };
 
+  test('appConfig is undefined', async () => {
+    try {
+      await handleReceiveMessage(null, null);
+    } catch (e) {
+      expect(e instanceof TypeError).toBe(true);
+      expect(e.message).toEqual('appConfig is undefined');
+    }
+  });
+
   test('messageEvent is undefined', async () => {
     try {
       await handleReceiveMessage({

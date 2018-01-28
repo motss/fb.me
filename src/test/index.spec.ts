@@ -67,8 +67,9 @@ describe('index', async () => {
         .expect(400);
 
       expect(d.body).toEqual({
-        status: 400,
-        message: 'req[body][object] is missing',
+        error: {
+          message: 'req[body][object] is missing',
+        },
       });
     } catch (e) {
       throw e;

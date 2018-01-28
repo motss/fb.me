@@ -99,14 +99,14 @@ export async function postWebhook(
 }
 
 export function handleWebhook(
-  appConfig: MessageflowConfig = {} as MessageflowConfig,
+  appConfig: MessageflowConfig,
   options?: RequestInit
 ): express.Router {
   return express.Router({ mergeParams: true })
     .post('/', async (req, res, next) => {
       try {
-        if (!Object.keys(appConfig || {}).length) {
-          throw new TypeError('appConfig is invalid');
+        if (appConfig == null) {
+          throw new TypeError('appConfig is undefined');
         }
 
         return await postWebhook(appConfig, options, req, res);
@@ -118,9 +118,11 @@ export function handleWebhook(
          * - returns a '404 Not Found' if event is not from a page subscription.
          */
         const rs = e instanceof TypeError ? 400 : 404;
+
         res.status(rs).send({
-          status: rs,
-          message: e.message,
+          error: {
+            message: e.message,
+          },
         });
 
         return next(e);

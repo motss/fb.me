@@ -17,11 +17,15 @@ import { FacebookEvent } from './handle-webhook';
 import sendReadReceipt from '@messageflow/send-as/send-as-read-receipt';
 
 export async function handleReceivePostback(
-  appConfig: MessageflowConfig = {} as MessageflowConfig,
+  appConfig: MessageflowConfig,
   event: FacebookPostbackEvent,
   options?: RequestInit
 ) {
   try {
+    if (appConfig == null) {
+      throw new TypeError('appConfig is undefined');
+    }
+
     const {
       sender,
       postback,

@@ -61,6 +61,15 @@ describe('handle-receive-postback', async () => {
     recipient: { id: fbId(16) },
   };
 
+  test('appConfig is undefined', async () => {
+    try {
+      await handleReceivePostback(null, null);
+    } catch (e) {
+      expect(e instanceof TypeError).toBe(true);
+      expect(e.message).toEqual('appConfig is undefined');
+    }
+  });
+
   test('postbackEvent is undefined', async () => {
     try {
       await handleReceivePostback({
