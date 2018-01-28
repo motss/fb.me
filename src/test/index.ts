@@ -9,7 +9,7 @@ import rq from 'supertest';
 
 /** Import other modules */
 import messageflow from '../';
-import { testAppConfig } from './test-config';
+import { testAppConfig } from './helper/test-config';
 
 describe('index', async () => {
   const config: MessageflowParams = {

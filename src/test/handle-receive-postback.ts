@@ -1,18 +1,18 @@
 // @ts-check
 
 /** Import typings */
-import { MessageflowConfig } from '../../';
+import { MessageflowConfig } from '../';
 import {
   FacebookPostbackEvent,
   FacebookPostbackEventPostback,
-} from '../../lib/handle-receive-postback';
-import { FacebookEventId } from '../../lib/handle-webhook';
+} from '../handle-receive-postback';
+import { FacebookEventId } from '../handle-webhook';
 
 /** Import other modules */
-import handleReceivePostback from '../../lib/handle-receive-postback';
-import { testAppConfig } from '../test-config';
-import fbId from '../util/fb-id';
-import locky, { closeLocky } from '../util/locky';
+import handleReceivePostback from '../handle-receive-postback';
+import fbId from './helper/fb-id';
+import locky, { closeLocky } from './helper/locky';
+import { testAppConfig } from './helper/test-config';
 
 /** Setting up */
 // const mockReqBody = {

@@ -1,10 +1,10 @@
 // @ts-check
 
 /** Import typings */
-import { MessageflowConfig } from '../';
+import { MessageflowConfig } from '../../';
 
 /** Import other modules */
-import fbId from './util/fb-id';
+import fbId from './fb-id';
 
 export declare interface TestConfig {
   appFetchTimeout: number;

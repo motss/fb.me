@@ -5,10 +5,10 @@ import express from 'express';
 import rq from 'supertest';
 
 /** Import other modules */
-import handleReceiveMessage from '../../lib/handle-receive-message';
-import handleReceivePostback from '../../lib/handle-receive-postback';
-import handleWebhook, { postWebhook } from '../../lib/handle-webhook';
-import { testAppConfig } from '../test-config';
+import handleReceiveMessage from '../handle-receive-message';
+import handleReceivePostback from '../handle-receive-postback';
+import handleWebhook, { postWebhook } from '../handle-webhook';
+import { testAppConfig } from './helper/test-config';
 
 /** Mock functions with Jest */
 jest.mock('../../lib/handle-receive-message', () =>

@@ -1,15 +1,15 @@
 // @ts-check
 
 /** Import typings */
-import { MessageflowConfig } from '../../';
-import { FacebookMessageEvent, MessagePayload } from '../../lib/handle-receive-message';
-import { FacebookEventId } from '../../lib/handle-webhook';
+import { MessageflowConfig } from '../';
+import { FacebookMessageEvent, MessagePayload } from '../handle-receive-message';
+import { FacebookEventId } from '../handle-webhook';
 
 /** Import other modules */
-import handleReceiveMessage from '../../lib/handle-receive-message';
-import { testAppConfig } from '../test-config';
-import fbId from '../util/fb-id';
-import locky, { closeLocky } from '../util/locky';
+import handleReceiveMessage from '../handle-receive-message';
+import fbId from './helper/fb-id';
+import locky, { closeLocky } from './helper/locky';
+import { testAppConfig } from './helper/test-config';
 
 /** Setting up */
 // const mockReqBody = {

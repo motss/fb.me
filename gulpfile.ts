@@ -60,7 +60,9 @@ gulp.task('lint', () =>
     `${SRC}/**/*.tsx`,
   ])
     .pipe(lint({
-      configuration: isProd ? './tslint.json' : './tslint.debug.json',
+      configuration: `./tslint${
+        isProd ? '.prod' : ''
+      }.json`,
       formatter: 'stylish',
       program: tslint.Linter.createProgram('./tsconfig.json'),
     }))

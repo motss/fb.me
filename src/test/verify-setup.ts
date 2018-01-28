@@ -5,8 +5,8 @@ import express from 'express';
 
 /** Import other modules */
 import rq from 'supertest';
-import verifySetup, { getVerifySetup } from '../../lib/verify-setup';
-import fbId from '../util/fb-id';
+import verifySetup, { getVerifySetup } from '../verify-setup';
+import fbId from './helper/fb-id';
 
 describe('lib', () => {
   describe('verify-setup', async () => {

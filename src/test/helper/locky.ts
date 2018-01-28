@@ -5,7 +5,7 @@ export declare interface NockRequestQuery {
 }
 
 /** Import typings */
-import { TestConfig } from '../test-config';
+import { TestConfig } from './test-config';
 
 /** Import project dependencies */
 import nock from 'nock';

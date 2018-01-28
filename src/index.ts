@@ -29,16 +29,16 @@ export declare interface MessageflowConfig extends MessageflowHandlers {
 }
 
 /** Import typings */
-import { MessagePayload } from './lib/handle-receive-message';
-import { FacebookPostbackEventPostback } from './lib/handle-receive-postback';
-import { FacebookEventId } from './lib/handle-webhook';
+import { MessagePayload } from './handle-receive-message';
+import { FacebookPostbackEventPostback } from './handle-receive-postback';
+import { FacebookEventId } from './handle-webhook';
 
 /** Import project dependencies */
 import express from 'express';
 
 /** Import other modules */
-import handleWebhook from './lib/handle-webhook';
-import verifySetup from './lib/verify-setup';
+import handleWebhook from './handle-webhook';
+import verifySetup from './verify-setup';
 
 export function messageflow({
   fetchTimeout,

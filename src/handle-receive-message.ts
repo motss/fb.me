@@ -18,15 +18,17 @@ export declare interface FacebookMessageEvent extends FacebookEvent {
 }
 
 /** Import typings */
-import { MessageflowConfig } from '../';
+import { RequestInit } from 'node-fetch';
+import { MessageflowConfig } from './';
 import { FacebookEvent } from './handle-webhook';
 
 /** Import other modules */
-import sendReadReceipt from '../helper/send-read-receipt';
+import sendAsReadReceipt from '@messageflow/send-as/send-as-read-receipt';
 
 export async function handleReceiveMessage(
   appConfig: MessageflowConfig,
-  event: FacebookMessageEvent
+  event: FacebookMessageEvent,
+  options: RequestInit = {}
 ) {
   try {
     const {
@@ -45,7 +47,11 @@ export async function handleReceiveMessage(
      * the bot has seen the message. This can prevent a user from
      * spamming the bot if the requests take some time to return.
      */
-    await sendReadReceipt(sender, appConfig);
+    await sendAsReadReceipt({
+      options,
+      url: appConfig.fbGraphUrl,
+      recipient: sender,
+    });
 
     if (!hasQuickReply && !hasText) {
       throw new TypeError('messageEvent is undefined');

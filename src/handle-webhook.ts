@@ -16,7 +16,7 @@ export declare interface FacebookEvent {
 }
 
 /** Import typings */
-import { MessageflowConfig } from '../';
+import { MessageflowConfig } from './';
 import { FacebookMessageEvent } from './handle-receive-message';
 import { FacebookPostbackEvent } from './handle-receive-postback';
 
