@@ -62,7 +62,7 @@ export async function handleReceiveMessage(
      */
     await sendAsReadReceipt({
       options,
-      url: `${url}?access_token=${pageAccessToken}`,
+      url: `${url}/me/messages?access_token=${pageAccessToken}`,
       recipient: sender,
     });
 

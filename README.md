@@ -1,7 +1,7 @@
 <div align="center" style="text-align: center;">
   <h1 style="border-bottom: none;">fb.me</h1>
 
-  <p>Better greeting message</p>
+  <p>Express middleware for chatbot development with Facebook Messenger</p>
 </div>
 
 <hr />
@@ -23,20 +23,13 @@
 [![codacy-badge]][codacy-url]
 [![inch-badge]][inch-url]
 
-> Lightweight Facebook Messenger SDK
+> This is a [Express][expressjs-url] based middleware that uses Facebook Messenger API, specifically the [Send API][send-api-url] for developing chatbots on Messenger. This helps in handling a few tasks:
+
+  1. Handling messages (text, or quick replies)
+  2. Handling postbacks
+  3. Verifying the chatbot setup (verifying webhook and whitelisting domains)
 
 ## Table of contents
-
-- [Pre-requisite](#pre-requisite)
-- [Setup](#setup)
-  - [Install](#install)
-  - [Usage](#usage)
-    - [Node.js](#nodejs)
-    - [Native ES modules or TypeScript](#native-es-modules-or-typescript)
-- [API Reference](#api-reference)
-  - [greeting(name)](#greetingname)
-  - [greetingSync(name)](#greetingsyncname)
-- [License](#license)
 
 ## Pre-requisites
 

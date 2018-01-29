@@ -8,6 +8,7 @@ export declare interface NockRequestQuery {
 import { TestConfig } from './test-config';
 
 /** Import project dependencies */
+import isUrl from 'is-url-superb';
 import nock from 'nock';
 
 /** Import other modules */
@@ -24,7 +25,39 @@ export async function meMessages(
   const recipientId = fbId(15);
 
   try {
-    nock(url.replace(/^(https?\:\/\/localhost:\d+).+/i, '$1'))
+    nock(url)
+      .post(uri => /^\/me\/thread_settings/i.test(uri))
+      .reply((uri, reqBody: any) => {
+        const {
+          setting_type,
+          domain_action_type,
+          whitelisted_domains,
+        } = reqBody;
+
+        if (/^domain_whitelisting/i.test(setting_type)) {
+          if (/^add/i.test(domain_action_type)) {
+            if (Array.isArray(whitelisted_domains)) {
+              const allValidUrls = whitelisted_domains.every(dmn => isUrl(dmn));
+
+              return [allValidUrls ? 200 : 500, {
+                ...(
+                  allValidUrls
+                  ? { result: 'Successfully updated whitelisted domains' }
+                  : { ...expected.domainWhitelisting.invalidURL }
+                ),
+              }];
+            }
+          }
+        }
+
+        return [500, {
+          error: {
+            message: `No match for ${uri} with request body ${JSON.stringify(reqBody)}`,
+          },
+        }];
+      });
+
+    nock(url)
       .post(uri => /^\/me\/messages/i.test(uri))
       .reply((uri, reqBody: any) => {
         const {
@@ -53,72 +86,10 @@ export async function meMessages(
           },
         }];
       });
-
-    // nock(url)
-    //   .post(uri => /^\/me\/messages\?access_token\=(ok|bad).+/i.test(uri))
-    //   .reply((uri, rb: any) => {
-    //     const {
-    //       recipient,
-    //     } = rb;
-    //     const {
-    //       access_token,
-    //     } = getReqQuery<NockRequestQuery>(uri);
-
-    //     if ((recipient && recipient.id) == null) {
-    //       return [
-    //         400,
-    //         {
-    //           code: 100,
-    //           fbtrace_id: fbId(11),
-    //           message: '(#100) The parameter recipient is required',
-    //           type: 'OAuthException',
-    //         },
-    //       ];
-    //     }
-
-    //     const isOK = /^ok/i.test(access_token);
-    //     const rs = isOK ? 200 : 400;
-
-    //     return [
-    //       rs, {
-    //         recipient_id: recipient.id,
-    //       },
-    //     ];
-    //   });
   } catch (e) {
     throw e;
   }
 }
-
-// export async function testFetchAsJson(
-//   config: TestConfig
-// ) {
-//   const {
-//     url,
-//   } = config;
-
-//   try {
-//     nock(url)
-//       .get(uri => /^\/fetchy\?access_token\=(ok|bad).+/i.test(uri))
-//       .reply((uri) => {
-//         const {
-//           access_token,
-//         } = getReqQuery<NockRequestQuery>(uri);
-
-//         const isOK = /^ok/i.test(access_token);
-//         const rs = isOK ? 200 : 400;
-
-//         return [
-//           rs, {
-//             status: rs,
-//             message: isOK ? 'OK' : 'Bad',
-//           },
-//         ];
-//       });
-//   } catch (e) {
-//     throw e;
-//   }
-// }
 
 export async function closeLocky() {
   try {
@@ -130,7 +101,6 @@ export async function closeLocky() {
 
 export async function locky(config) {
   try {
-    // await testFetchAsJson(config);
     await meMessages(config);
   } catch (e) {
     throw e;

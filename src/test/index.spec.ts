@@ -13,15 +13,15 @@ import { testAppConfig } from './helper/test-config';
 
 describe('index', async () => {
   const config: MessageflowConfig = {
-    appId: testAppConfig.fbAppId,
-    pageAccessToken: testAppConfig.fbPageAccessToken,
-    pageId: testAppConfig.fbPageId,
-    url: testAppConfig.fbGraphUrl,
-    verifyToken: testAppConfig.fbVerifyToken,
+    appId: testAppConfig.appId,
+    pageAccessToken: testAppConfig.pageAccessToken,
+    pageId: testAppConfig.pageId,
+    url: testAppConfig.url,
+    verifyToken: testAppConfig.verifyToken,
 
-    fetchTimeout: testAppConfig.appFetchTimeout,
-    notificationType: testAppConfig.fbNotificationType,
-    typingDelay: testAppConfig.fbTypingDelay,
+    fetchTimeout: testAppConfig.fetchTimeout,
+    notificationType: testAppConfig.notificationType,
+    typingDelay: testAppConfig.typingDelay,
   };
   const mockApp = express()
     .use(express.json())
@@ -52,7 +52,7 @@ describe('index', async () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'verifyToken is invalid',
+          message: 'hub.mode is missing',
         },
       });
     } catch (e) {

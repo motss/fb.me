@@ -17,7 +17,7 @@ export declare interface TestConfig {
 export const testConfig: TestConfig = {
   fetchTimeout: 9e3,
 
-  url: 'http://localhost:5353/me/messages',
+  url: 'http://localhost:5353',
   notificationType: 'NO_PUSH',
   pageAccessToken: 'test-fb-page-access-token',
 };
