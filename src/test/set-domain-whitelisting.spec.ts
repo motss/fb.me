@@ -48,8 +48,7 @@ describe('set-domain-whitelisting', async () => {
       });
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message)
-        .toEqual('Parameter pageAccessToken is invalid');
+      expect(e.message).toEqual('Parameter pageAccessToken is invalid');
     }
   });
 
@@ -78,6 +77,19 @@ describe('set-domain-whitelisting', async () => {
       });
     } catch (e) {
       expect(e).toEqual({ ...expected.domainWhitelisting.invalidURL });
+    }
+  });
+
+  test('setDomainWhitelisting works when no domain is specified', async () => {
+    try {
+      const d = await setDomainWhitelisting({
+        url: testAppConfig.url,
+        pageAccessToken: testAppConfig.pageAccessToken,
+      });
+
+      expect(d).toEqual({ ...expected.domainWhitelisting.whitelistedSuccessfully });
+    } catch (e) {
+      throw e;
     }
   });
 

@@ -26,6 +26,40 @@ export async function meMessages(
 
   try {
     nock(url)
+      .post(uri => /^\/me\/messenger_codes/i.test(uri))
+      .reply((uri, reqBody: any) => {
+        const {
+          type,
+          data,
+          image_size,
+        } = reqBody;
+
+        if (/^standard/i.test(type)) {
+          if (/^abc\+=\*/.test(data && data.ref)) {
+            return [500, {
+              ...expected.messengerCode.unknownError,
+            }];
+          }
+
+          if (image_size < 100 || image_size > 2000) {
+            return [400, {
+              ...expected.messengerCode.invalidImageSize,
+            }];
+          }
+
+          return [200, {
+            ...expected.messengerCode.codedSuccessfully,
+          }];
+        }
+
+        return [500, {
+          error: {
+            message: `No match for ${uri} with request body ${JSON.stringify(reqBody)}`,
+          },
+        }];
+      });
+
+    nock(url)
       .post(uri => /^\/me\/thread_settings/i.test(uri))
       .reply((uri, reqBody: any) => {
         const {
