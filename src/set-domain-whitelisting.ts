@@ -16,20 +16,20 @@ import { fetchAsJson } from 'fetch-as';
 export async function setDomainWhitelisting({
   url,
   pageAccessToken,
-  options,
   domains,
+  options = {} as RequestInit,
 }: SetDomainWhitelistingParams) {
   try {
     if (typeof url !== 'string' || !url.length) {
-      throw new TypeError('url is invalid');
+      throw new TypeError('Parameter url is invalid');
     }
 
     if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
-      throw new TypeError('pageAccessToken is invalid');
+      throw new TypeError('Parameter pageAccessToken is invalid');
     }
 
-    if (typeof domains !== 'string' || !Array.isArray(domains)) {
-      throw new TypeError('domains has to be either a string or an array of strings');
+    if (typeof domains !== 'string' && !Array.isArray(domains)) {
+      throw new TypeError('Parameter domains has to be either a string or an array of strings');
     }
 
     const uri = `${url}/me/thread_settings?access_token=${pageAccessToken}`;

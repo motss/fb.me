@@ -42,7 +42,7 @@ export async function meMessages(
               return [allValidUrls ? 200 : 500, {
                 ...(
                   allValidUrls
-                  ? { result: 'Successfully updated whitelisted domains' }
+                  ? { ...expected.domainWhitelisting.whitelistedSuccessfully }
                   : { ...expected.domainWhitelisting.invalidURL }
                 ),
               }];

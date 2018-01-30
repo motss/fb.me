@@ -11,4 +11,7 @@ export const domainWhitelisting = {
       fbtrace_id: 'DR7Nio\/PoNN',
     },
   },
+  whitelistedSuccessfully: {
+    result: 'Successfully updated whitelisted domains',
+  },
 };
