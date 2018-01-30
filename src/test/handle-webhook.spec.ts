@@ -24,7 +24,7 @@ jest.mock('../handle-receive-postback', () =>
     options: opts,
   })));
 
-describe('handle-webhook', async () => {
+describe('handle-webhook', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.unmock('../handle-receive-message');

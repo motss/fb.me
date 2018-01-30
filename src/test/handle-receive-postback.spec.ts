@@ -51,7 +51,7 @@ afterAll(async () => {
   }
 });
 
-describe('handle-receive-postback', async () => {
+describe('handle-receive-postback', () => {
   const mockEventPostback: FacebookPostbackEvent = {
     postback: {
       title: 'test-postback-title',

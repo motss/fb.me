@@ -22,7 +22,7 @@ afterAll(async () => {
   }
 });
 
-describe('set-messenger-code', async () => {
+describe('set-messenger-code', () => {
   test('Parameter url is invalid', async () => {
     try {
       await setMessengerCode({

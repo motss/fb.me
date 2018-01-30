@@ -22,7 +22,7 @@ afterAll(async () => {
   }
 });
 
-describe('set-domain-whitelisting', async () => {
+describe('set-domain-whitelisting', () => {
   test('Parameter url is invalid', async () => {
     try {
       await setDomainWhitelisting({

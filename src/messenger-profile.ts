@@ -6,10 +6,10 @@ export declare interface MessengerProfileParams {
   options?: RequestInit;
 }
 export declare interface SetMessengerProfileParams extends MessengerProfileParams {
-  body: { [key: string]: string; };
+  body: { [key: string]: any; };
 }
 export declare interface GetMessengerProfileParams extends MessengerProfileParams {
-  fields: string;
+  fields?: string | string[];
 }
 export declare interface DeleteMessengerProfileParams extends MessengerProfileParams {
   fields: { [key: string]: any };
@@ -28,6 +28,14 @@ export async function setMessengerProfile({
   options = {} as RequestInit,
 }: SetMessengerProfileParams) {
   try {
+    if (typeof url !== 'string' || !url.length) {
+      throw new TypeError('Parameter url is invalid');
+    }
+
+    if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
+      throw new TypeError('Parameter pageAccessToken is invalid');
+    }
+
     const uri = `${url}/me/messenger_profile?access_token=${pageAccessToken}`;
     const fetchOpts = {
       method: 'POST',
@@ -57,7 +65,21 @@ export async function getMessengerProfile({
   options = {} as RequestInit,
 }: GetMessengerProfileParams) {
   try {
-    const uri = `${url}/me/messenger_profile?access_token=${pageAccessToken}&fields=${fields}`;
+    if (typeof url !== 'string' || !url.length) {
+      throw new TypeError('Parameter url is invalid');
+    }
+
+    if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
+      throw new TypeError('Parameter pageAccessToken is invalid');
+    }
+
+    const uri = `${url}/me/messenger_profile?access_token=${
+      pageAccessToken
+    }&fields=${
+      Array.isArray(fields)
+        ? fields.join(',')
+        : fields
+    }`;
     const fetchOpts = {
       method: 'GET',
       headers: {
@@ -84,14 +106,22 @@ export async function deleteMessengerProfile({
   options = {} as RequestInit,
 }: DeleteMessengerProfileParams) {
   try {
-    const uri = `${url}/me/messenger_profile?access_token=${pageAccessToken}&fields=${fields}`;
+    if (typeof url !== 'string' || !url.length) {
+      throw new TypeError('Parameter url is invalid');
+    }
+
+    if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
+      throw new TypeError('Parameter pageAccessToken is invalid');
+    }
+
+    const uri = `${url}/me/messenger_profile?access_token=${pageAccessToken}`;
     const fetchOpts = {
       method: 'DELETE',
       headers: {
         ...(options.headers || {}),
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ ...fields }),
+      body: JSON.stringify({ fields }),
     };
     const d = await fetchAsJson(uri, fetchOpts);
 

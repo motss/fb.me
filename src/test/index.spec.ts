@@ -11,7 +11,7 @@ import rq from 'supertest';
 import messageflow from '../';
 import { testAppConfig } from './helper/test-config';
 
-describe('index', async () => {
+describe('index', () => {
   const config: MessageflowConfig = {
     appId: testAppConfig.appId,
     pageAccessToken: testAppConfig.pageAccessToken,

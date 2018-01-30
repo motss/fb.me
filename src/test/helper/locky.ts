@@ -26,6 +26,127 @@ export async function meMessages(
 
   try {
     nock(url)
+      .post(uri => /^\/me\/messenger_profile/i.test(uri))
+      .reply((uri, reqBody: any) => {
+        const fieldsKeys = Object.keys(reqBody || {});
+        const fieldsRe = new RegExp([
+          'GET_STARTED',
+          'PERSISTENT_MENU',
+          'TARGET_AUDIENCE',
+          'WHITELISTED_DOMAINS',
+          'GREETING',
+          'ACCOUNT_LINKING_URL',
+          'PAYMENT_SETTINGS',
+          'HOME_URL',
+        ].join('|'), 'i');
+
+        if (
+          !fieldsKeys.length
+            || reqBody[fieldsKeys[0]] == null
+            || !(fieldsKeys.every(n => fieldsRe.test(n)))
+        ) {
+          return [400, {
+            ...expected.messengerProfile.set.requiresOneOf,
+          }];
+        }
+
+        /** NOTE: Simple test on `get_started.payload` */
+        if (/^get_started/i.test(fieldsKeys[0])) {
+          const getStartedPayload = reqBody.get_started && reqBody.get_started.payload;
+          const invalidKey = Object.keys(reqBody.get_started || {})
+            .find(n => n !== 'payload');
+
+          if (typeof invalidKey !== 'undefined') {
+            if (
+              reqBody.get_started[invalidKey] == null
+                || (typeof getStartedPayload === 'string' && getStartedPayload.length > 0)
+            ) {
+              return [400, {
+                ...expected.messengerProfile.set.invalidKeys,
+              }];
+            }
+
+            return [400, {
+              ...expected.messengerProfile.set.missingGetStartedPayload,
+            }];
+          }
+
+          return [200, {
+            ...expected.messengerProfile.set.setSuccessfully,
+          }];
+        }
+
+        return [500, {
+          error: {
+            message: `No match for ${uri} with request body ${JSON.stringify(reqBody)}`,
+          },
+        }];
+      });
+
+    nock(url)
+      .get(uri => /^\/me\/messenger_profile/i.test(uri))
+      .reply((uri) => {
+        const { fields } = getReqQuery(uri);
+
+        if (/^\*+/i.test(fields)) {
+          return [400, {
+            ...expected.messengerProfile.get.syntaxError,
+          }];
+        }
+
+        return [200, {
+          ...expected.messengerProfile.get.getSuccessfully,
+        }];
+      });
+
+    nock(url)
+      .delete(uri => /^\/me\/messenger_profile/i.test(uri))
+      .reply((uri, reqBody: any) => {
+        const { fields } = reqBody;
+
+        if (fields == null) {
+          return [400, {
+            ...expected.messengerProfile.delete.missingFields,
+          }];
+        }
+
+        if (!Array.isArray(fields) || !fields.length) {
+          return [400, {
+            ...expected.messengerProfile.delete.emptyFields,
+          }];
+        }
+
+        const fieldsRe = new RegExp([
+          'GET_STARTED',
+          'PERSISTENT_MENU',
+          'TARGET_AUDIENCE',
+          'WHITELISTED_DOMAINS',
+          'GREETING',
+          'ACCOUNT_LINKING_URL',
+          'PAYMENT_SETTINGS',
+          'HOME_URL',
+        ].join('|'), 'i');
+
+        if (fields.length > 0) {
+          if (!(fields.every(n => fieldsRe.test(n)))) {
+            return [400, {
+              ...expected.messengerProfile.delete.fieldsMustBeOneOf,
+            }];
+          }
+
+          return [200, {
+            ...expected.messengerProfile.delete.deletedSuccessfully,
+          }];
+        }
+
+        return [500, {
+          error: {
+            message: `No match for ${uri} with request body ${JSON.stringify(reqBody)}`,
+          },
+        }];
+      });
+
+    nock(url)
       .post(uri => /^\/me\/messenger_codes/i.test(uri))
       .reply((uri, reqBody: any) => {
         const {
