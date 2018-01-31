@@ -15,15 +15,15 @@ export async function getVerifySetup(
     const hubChallenge = reqQuery['hub.challenge'];
 
     if (hubMode == null) {
-      throw new TypeError('hub.mode is missing');
+      throw new TypeError('Parameter hub.mode is missing');
     }
 
     if (hubVerifyToken == null) {
-      throw new TypeError('hub.verify_token is missing');
+      throw new TypeError('Parameter hub.verify_token is missing');
     }
 
     if (hubChallenge == null) {
-      throw new TypeError('hub.challenge is missing');
+      throw new TypeError('Parameter hub.challenge is missing');
     }
 
     if (/^subscribe/i.test(hubMode) && hubVerifyToken === verifyToken) {
@@ -43,7 +43,7 @@ export function verifySetup(verifyToken: string): express.Router {
     .get('/', async (req, res, next) => {
       try {
         if (typeof verifyToken !== 'string' || !verifyToken.length) {
-          throw new TypeError('verifyToken is invalid');
+          throw new TypeError('Parameter verifyToken is invalid');
         }
 
         return await getVerifySetup(verifyToken, req, res);

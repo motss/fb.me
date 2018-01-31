@@ -27,6 +27,7 @@ import { FacebookEventId } from './handle-webhook';
 import express from 'express';
 
 /** Import other modules */
+import handleMessengerCode from './handle-messenger-code';
 import handleWebhook from './handle-webhook';
 import verifySetup from './verify-setup';
 
@@ -35,8 +36,9 @@ export function messageflow(
   options?: RequestInit
 ): express.Application {
   return express()
-    .get('/', verifySetup(config.verifyToken))
-    .post('/', handleWebhook(config, options));
+    .use('/messenger-code', handleMessengerCode(config))
+    .use('/', verifySetup(config.verifyToken))
+    .use('/', handleWebhook(config, options));
 }
 
 export default messageflow;

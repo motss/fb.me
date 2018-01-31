@@ -66,7 +66,7 @@ describe('handle-receive-postback', () => {
       await handleReceivePostback(null, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('url is invalid');
+      expect(e.message).toEqual('Parameter url is invalid');
     }
   });
 
@@ -81,7 +81,7 @@ describe('handle-receive-postback', () => {
       }, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('pageAccessToken is invalid');
+      expect(e.message).toEqual('Parameter pageAccessToken is invalid');
     }
   });
 
@@ -93,7 +93,7 @@ describe('handle-receive-postback', () => {
       }, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('postbackEvent is undefined');
+      expect(e.message).toEqual('Parameter postbackEvent is undefined');
     }
   });
 
@@ -105,7 +105,7 @@ describe('handle-receive-postback', () => {
       }, mockEventPostback);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('onPostback is not a function');
+      expect(e.message).toEqual('Parameter onPostback is not a function');
     }
   });
 

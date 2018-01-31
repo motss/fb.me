@@ -28,11 +28,11 @@ export async function handleReceivePostback(
     } = appConfig || {} as MessageflowConfig;
 
     if (typeof url !== 'string' || !url.length) {
-      throw new TypeError('url is invalid');
+      throw new TypeError('Parameter url is invalid');
     }
 
     if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
-      throw new TypeError('pageAccessToken is invalid');
+      throw new TypeError('Parameter pageAccessToken is invalid');
     }
 
     const {
@@ -52,12 +52,12 @@ export async function handleReceivePostback(
     });
 
     if (postback == null) {
-      throw new TypeError('postbackEvent is undefined');
+      throw new TypeError('Parameter postbackEvent is undefined');
     }
 
     const onPostbackHandler = typeof appConfig.onPostback === 'function'
       ? appConfig.onPostback
-      : () => { throw new TypeError('onPostback is not a function'); };
+      : () => { throw new TypeError('Parameter onPostback is not a function'); };
 
     return await onPostbackHandler(sender, postback);
   } catch (e) {

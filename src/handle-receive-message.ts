@@ -37,11 +37,11 @@ export async function handleReceiveMessage(
     } = appConfig || {} as MessageflowConfig;
 
     if (typeof url !== 'string' || !url.length) {
-      throw new TypeError('url is invalid');
+      throw new TypeError('Parameter url is invalid');
     }
 
     if (typeof pageAccessToken !== 'string' || !pageAccessToken.length) {
-      throw new TypeError('pageAccessToken is invalid');
+      throw new TypeError('Parameter pageAccessToken is invalid');
     }
 
     const {
@@ -67,15 +67,15 @@ export async function handleReceiveMessage(
     });
 
     if (!hasQuickReply && !hasText) {
-      throw new TypeError('messageEvent is undefined');
+      throw new TypeError('Parameter messageEvent is undefined');
     }
 
     const onMessageHandler = typeof appConfig.onMessage === 'function'
       ? appConfig.onMessage
-      : () => { throw new TypeError('onMessage is not a function'); };
+      : () => { throw new TypeError('Parameter onMessage is not a function'); };
     const onQuickReplyHandler = typeof appConfig.onQuickReply === 'function'
       ? appConfig.onQuickReply
-      : () => { throw new TypeError('onQuickReply is not a function'); };
+      : () => { throw new TypeError('Parameter onQuickReply is not a function'); };
 
     return hasQuickReply
       ? await onQuickReplyHandler(sender, message.quick_reply)

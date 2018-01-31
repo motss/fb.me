@@ -54,7 +54,7 @@ describe('handle-webhook', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'appConfig is undefined',
+          message: 'Parameter appConfig is undefined',
         },
       });
     } catch (e) {
@@ -71,7 +71,7 @@ describe('handle-webhook', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'req[body][object] is missing',
+          message: 'Parameter req[body][object] is missing',
         },
       });
     } catch (e) {
@@ -88,7 +88,7 @@ describe('handle-webhook', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'req[body][entry] is missing',
+          message: 'Parameter req[body][entry] is missing',
         },
       });
     } catch (e) {
@@ -128,7 +128,7 @@ describe('handle-webhook', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'req[body][entry] is not an array',
+          message: 'Parameter req[body][entry] is not an array',
         },
       });
     } catch (e) {
@@ -153,7 +153,7 @@ describe('handle-webhook', () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('req[body][entry][0][messaging] is missing');
+      expect(e.message).toEqual('Parameter req[body][entry][0][messaging] is missing');
     }
   });
 
@@ -174,7 +174,7 @@ describe('handle-webhook', () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('req[body][entry][0][messaging] is not an array');
+      expect(e.message).toEqual('Parameter req[body][entry][0][messaging] is not an array');
     }
   });
 
@@ -198,7 +198,7 @@ describe('handle-webhook', () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('req[body][entry][0][messaging][0] is missing');
+      expect(e.message).toEqual('Parameter req[body][entry][0][messaging][0] is missing');
     }
   });
 

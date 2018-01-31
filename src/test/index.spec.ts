@@ -9,9 +9,15 @@ import rq from 'supertest';
 
 /** Import other modules */
 import messageflow from '../';
+import * as expected from './helper/expected';
+import locky, { closeLocky } from './helper/locky';
 import { testAppConfig } from './helper/test-config';
 
 describe('index', () => {
+  beforeEach(async () => await locky(testAppConfig));
+
+  afterEach(async () => await closeLocky());
+
   const config: MessageflowConfig = {
     appId: testAppConfig.appId,
     pageAccessToken: testAppConfig.pageAccessToken,
@@ -36,7 +42,7 @@ describe('index', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'verifyToken is invalid',
+          message: 'Parameter verifyToken is invalid',
         },
       });
     } catch (e) {
@@ -52,7 +58,7 @@ describe('index', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'hub.mode is missing',
+          message: 'Parameter hub.mode is missing',
         },
       });
     } catch (e) {
@@ -68,8 +74,26 @@ describe('index', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'req[body][object] is missing',
+          message: 'Parameter req[body][object] is missing',
         },
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  test('handleMessengerCode has been called', async () => {
+    try {
+      const d = await rq(
+        express()
+          .use('/', messageflow(config))
+      )
+        // .get('/messenger-code?ref=haha&image_size=1999')
+        .get('/messenger-code')
+        .expect(200);
+
+      expect(d.body).toEqual({
+        ...expected.messengerCode.codedSuccessfully,
       });
     } catch (e) {
       throw e;

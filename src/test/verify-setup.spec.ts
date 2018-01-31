@@ -28,7 +28,7 @@ describe('verify-setup', () => {
 
       expect(d.body).toEqual({
         error: {
-          message: 'verifyToken is invalid',
+          message: 'Parameter verifyToken is invalid',
         },
       });
     } catch (e) {
@@ -44,7 +44,7 @@ describe('verify-setup', () => {
       await getVerifySetup(mockFbVerifyToken, mockReq as any, null);
     } catch (e) {
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('hub.mode is missing');
+      expect(e.message).toEqual('Parameter hub.mode is missing');
     }
   });
 
@@ -58,7 +58,7 @@ describe('verify-setup', () => {
       await getVerifySetup(mockFbVerifyToken, mockReq as any, null);
     } catch (e) {
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('hub.verify_token is missing');
+      expect(e.message).toEqual('Parameter hub.verify_token is missing');
     }
   });
 
@@ -73,7 +73,7 @@ describe('verify-setup', () => {
       await getVerifySetup(mockFbVerifyToken, mockReq as any, null);
     } catch (e) {
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('hub.challenge is missing');
+      expect(e.message).toEqual('Parameter hub.challenge is missing');
     }
   });
 
@@ -88,7 +88,7 @@ describe('verify-setup', () => {
       await getVerifySetup(mockFbVerifyToken, mockReq as any, null);
     } catch (e) {
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('hub.challenge is missing');
+      expect(e.message).toEqual('Parameter hub.challenge is missing');
     }
   });
 

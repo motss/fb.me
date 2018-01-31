@@ -154,6 +154,14 @@ export async function meMessages(
           data,
           image_size,
         } = reqBody;
+        const { access_token } = getReqQuery(uri);
+
+        /** NOTE: To test 404 error */
+        if (/^error/.test(access_token)) {
+          return [404, {
+            message: 'Not found',
+          }];
+        }
 
         if (/^standard/i.test(type)) {
           if (/^abc\+=\*/.test(data && data.ref)) {

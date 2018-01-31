@@ -40,16 +40,16 @@ export async function postWebhook(
     const entry = reqBody && reqBody.entry;
 
     if (object == null) {
-      throw new TypeError('req[body][object] is missing');
+      throw new TypeError('Parameter req[body][object] is missing');
     }
 
     if (entry == null) {
-      throw new TypeError('req[body][entry] is missing');
+      throw new TypeError('Parameter req[body][entry] is missing');
     }
 
     if ('page' === object) {
       if (!Array.isArray(entry) || !entry.length) {
-        throw new TypeError('req[body][entry] is not an array');
+        throw new TypeError('Parameter req[body][entry] is not an array');
       }
 
       /**
@@ -65,16 +65,16 @@ export async function postWebhook(
         const messaging = pageEntry && pageEntry.messaging;
 
         if (messaging == null) {
-          throw new TypeError(`req[body][entry][${i}][messaging] is missing`);
+          throw new TypeError(`Parameter req[body][entry][${i}][messaging] is missing`);
         }
 
         if (!Array.isArray(messaging) || !messaging.length) {
-          throw new TypeError(`req[body][entry][${i}][messaging] is not an array`);
+          throw new TypeError(`Parameter req[body][entry][${i}][messaging] is not an array`);
         }
 
         return Promise.all(messaging.map(async (messageEvent, ii) => {
           if (messageEvent == null) {
-            throw new TypeError(`req[body][entry][${i}][messaging][${ii}] is missing`);
+            throw new TypeError(`Parameter req[body][entry][${i}][messaging][${ii}] is missing`);
           }
 
           if ((messageEvent && messageEvent.message) != null) {
@@ -106,7 +106,7 @@ export function handleWebhook(
     .post('/', async (req, res, next) => {
       try {
         if (appConfig == null) {
-          throw new TypeError('appConfig is undefined');
+          throw new TypeError('Parameter appConfig is undefined');
         }
 
         return await postWebhook(appConfig, options, req, res);

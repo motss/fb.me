@@ -41,21 +41,9 @@ import { testAppConfig } from './helper/test-config';
 //   ],
 // };
 
-beforeEach(async () => {
-  try {
-    return await locky(testAppConfig);
-  } catch (e) {
-    throw e;
-  }
-});
+beforeEach(async () => await locky(testAppConfig));
 
-afterAll(async () => {
-  try {
-    return await closeLocky();
-  } catch (e) {
-    throw e;
-  }
-});
+afterAll(async () => await closeLocky());
 
 describe('handle-receive-message', () => {
   const mockEvent: FacebookMessageEvent = {
@@ -72,7 +60,7 @@ describe('handle-receive-message', () => {
       await handleReceiveMessage(null, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('url is invalid');
+      expect(e.message).toEqual('Parameter url is invalid');
     }
   });
 
@@ -87,7 +75,7 @@ describe('handle-receive-message', () => {
       }, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('pageAccessToken is invalid');
+      expect(e.message).toEqual('Parameter pageAccessToken is invalid');
     }
   });
 
@@ -99,7 +87,7 @@ describe('handle-receive-message', () => {
       }, null);
     } catch (e) {
       expect(e instanceof TypeError).toBe(true);
-      expect(e.message).toEqual('messageEvent is undefined');
+      expect(e.message).toEqual('Parameter messageEvent is undefined');
     }
   });
 
@@ -120,7 +108,7 @@ describe('handle-receive-message', () => {
         }, mockEventMessage);
       } catch (e) {
         expect(e instanceof TypeError).toBe(true);
-        expect(e.message).toEqual('onMessage is not a function');
+        expect(e.message).toEqual('Parameter onMessage is not a function');
       }
     });
 
@@ -173,7 +161,7 @@ describe('handle-receive-message', () => {
         }, mockEventQuickReply);
       } catch (e) {
         expect(e instanceof TypeError).toBe(true);
-        expect(e.message).toEqual('onQuickReply is not a function');
+        expect(e.message).toEqual('Parameter onQuickReply is not a function');
       }
     });
 
