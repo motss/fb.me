@@ -71,6 +71,22 @@ $ npm install --save fb.me
 
 ### Usage
 
+**src/on-handlers.ts**
+
+```js
+export async function onMessageHandler(sender, text) {
+  // Handler message text here...
+}
+
+export async function onPostbackHandler(sender, postback) {
+  // Handler postback payload here...
+}
+
+export async function onQuickReplyHandler(sender, quickReply) {
+  // Handler quick reply here...
+}
+```
+
 #### Node.js
 
 **src/server.js**
@@ -79,13 +95,18 @@ $ npm install --save fb.me
 /** Import project dependencies */
 const https = require('https');
 const express = require('express');
-
-/** Import other modules */
 const {
   messageflow,
   handleMessengerProfile,
   handleDomainWhitelisting
 } = require('fb.me');
+
+/** Import other modules */
+const {
+  onMessageHandler,
+  onPostbackHandler,
+  onQuickReplyHandler,
+} = require('./on-handlers');
 
 /** Setting up */
 const PORT = process.env.PORT;
@@ -136,51 +157,9 @@ app.listen(PORT, async () => {
   });
 ```
 
-**src/on-message-handler**
-
-```js
-async function onMessageHandler(sender, text) {
-  try {
-    // Handler message text here...
-  } catch (e) {
-    throw e;
-  }
-}
-
-module.exports = onMessageHandler;
-```
-
-**src/on-postback-handler**
-
-```js
-async function onPostbackHandler(sender, postback) {
-  try {
-    // Handler postback payload here...
-  } catch (e) {
-    throw e;
-  }
-}
-
-module.exports = onPostbackHandler;
-```
-
-**src/on-quick-reply-handler**
-
-```js
-async function onQuickReplyHandler(sender, quickReply) {
-  try {
-    // Handler quick reply here...
-  } catch (e) {
-    throw e;
-  }
-}
-
-module.exports = onQuickReplyHandler;
-```
-
 #### Native ES modules or TypeScript
 
-**src/server.js**
+**src/server.ts**
 
 ```ts
 // @ts-check
@@ -188,11 +167,16 @@ module.exports = onQuickReplyHandler;
 /** Import project dependencies */
 import https from 'https';
 import express from 'express';
-
-/** Import other modules */
 import messageflow from 'fb.me';
 import handleMessengerProfile from 'fb.me/handle-messenger-profile';
 import handleDomainWhitelisting from 'fb.me/handle-domain-whitelisting';
+
+/** Import other modules */
+import {
+  onMessageHandler,
+  onPostbackHandler,
+  onQuickReplyHandler,
+} from './on-handlers';
 
 /** Setting up */
 const PORT = process.env.PORT;
@@ -241,54 +225,6 @@ app.listen(PORT, async () => {
 
     console.info(`@ Express server running at port ${PORT}...`;
   });
-```
-
-**src/on-message-handler**
-
-```js
-// @ts-check
-
-export async function onMessageHandler(sender, text) {
-  try {
-    // Handler message text here...
-  } catch (e) {
-    throw e;
-  }
-}
-
-export default onMessageHandler;
-```
-
-**src/on-postback-handler**
-
-```js
-// @ts-check
-
-export async function onPostbackHandler(sender, postback) {
-  try {
-    // Handler postback payload here...
-  } catch (e) {
-    throw e;
-  }
-}
-
-export default onPostbackHandler;
-```
-
-**src/on-quick-reply-handler**
-
-```js
-// @ts-check
-
-export async function onQuickReplyHandler(sender, quickReply) {
-  try {
-    // Handler quick reply here...
-  } catch (e) {
-    throw e;
-  }
-}
-
-export default onQuickReplyHandler;
 ```
 
 ## API Reference
