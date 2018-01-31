@@ -1,7 +1,7 @@
 <div align="center" style="text-align: center;">
   <h1 style="border-bottom: none;">fb.me</h1>
 
-  <p>Express middleware for chatbot development with Facebook Messenger</p>
+  <p>Express app for chatbot development with Facebook Messenger</p>
 </div>
 
 <hr />
