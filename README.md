@@ -23,11 +23,13 @@
 [![codacy-badge]][codacy-url]
 [![inch-badge]][inch-url]
 
-> This is a [Express][expressjs-url] based middleware that uses Facebook Messenger API, specifically the [Send API][send-api-url] for developing chatbots on Messenger. This helps in handling a few tasks:
+> This is an [Express][expressjs-url] app for chatbot development on Facebook Messenger that uses Facebook Messenger API, specifically the [Send API][send-api-url] by providing a set of methods and route handlers to better deal with a few common tasks while developing any kind of typical chatbot:
 
   1. Handling messages (text, or quick replies)
-  2. Handling postbacks
-  3. Verifying the chatbot setup (verifying webhook and whitelisting domains)
+  2. Handling messenger profile of chatbots
+  3. Handling postbacks
+  4. Setting messenger code for chatbots
+  5. Verifying the chatbot setup (verifying webhook and whitelisting domains)
 
 ## Table of contents
 
@@ -50,13 +52,13 @@ $ npm install --save fb.me
 #### Node.js
 
 ```js
-const greeting = require('fb.me');
+
 ```
 
 #### Native ES modules or TypeScript
 
 ```ts
-import greeting from 'fb.me';
+
 ```
 
 ## API Reference
@@ -66,16 +68,14 @@ import greeting from 'fb.me';
   - name <[string][string-mdn-url]> Name of the person to greet at.
   - returns: <[Promise][promise-mdn-url]<[string][string-mdn-url]>> Promise which resolves with a greeting message.
 
-### greetingSync(name)
-
-This methods works the same as `greeting(name)` except that this is the synchronous version.
-
 ## License
 
 [MIT License](https://motss.mit-license.org/) © Rong Sen Ng
 
 
 
+[expressjs-url]: https://github.com/expressjs/express
+[send-api-url]: https://developers.facebook.com/docs/messenger-platform/reference/send-api
 [typescript-url]: https://github.com/Microsoft/TypeScript
 [node-js-url]: https://nodejs.org
 [npm-url]: https://www.npmjs.com
@@ -99,8 +99,8 @@ This methods works the same as `greeting(name)` except that this is the synchron
 [codecov-badge]: https://codecov.io/gh/motss/fb.me/branch/master/graph/badge.svg
 [coveralls-badge]: https://coveralls.io/repos/github/motss/fb.me/badge.svg?branch=master
 
-[codebeat-badge]: https://codebeat.co/badges/e486e791-12b7-4198-b834-0fa5bd04e1c3
-[codacy-badge]: https://api.codacy.com/project/badge/Grade/a70d1556b4e74711a162c4fd4dbb68a1
+[codebeat-badge]: https://codebeat.co/badges/eb7e977f-be19-4b56-86ea-9aa0b6c55072
+[codacy-badge]: https://api.codacy.com/project/badge/Grade/831b7b2c78524b77b0378f848a196553
 [inch-badge]: http://inch-ci.org/github/motss/fb.me.svg?branch=master
 
 
@@ -118,6 +118,6 @@ This methods works the same as `greeting(name)` except that this is the synchron
 [codecov-url]: https://codecov.io/gh/motss/fb.me
 [coveralls-url]: https://coveralls.io/github/motss/fb.me?branch=master
 
-[codebeat-url]: https://codebeat.co/projects/github-com-motss-fb.me-master
+[codebeat-url]: https://codebeat.co/projects/github-com-motss-fb-me-master
 [codacy-url]: https://www.codacy.com/app/motss/fb.me?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=motss/fb.me&amp;utm_campaign=Badge_Grade
 [inch-url]: http://inch-ci.org/github/motss/fb.me
