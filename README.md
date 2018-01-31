@@ -51,14 +51,222 @@ $ npm install --save fb.me
 
 #### Node.js
 
-```js
+**src/server.js**
 
+```js
+/** Import project dependencies */
+const https = require('https');
+const express = require('express');
+
+/** Import other modules */
+const {
+  messageflow,
+  setMessengerProfile,
+  setDomainWhitelisting
+} = require('fb.me');
+
+/** Setting up */
+const PORT = process.env.PORT;
+const config = {
+  appId: '<FB_APP_ID>',
+  pageAccessToken: '<FB_PAGE_ACCESS_TOKEN>',
+  pageId: '<FB_PAGE_ID>',
+  url: '<FB_GRAPH_URL>',
+  verifyToken: 'FB_VERIFY_TOKEN',
+
+  fetchTimeout: 599e3,
+  notificationType: 'REGULAR',
+  typingDelay: 5e2,
+  onMessage: onMessageHandler,
+  onPostback: onPostbackHandler,
+  onQuickReply: onQuickReplyHandler,
+};
+const options = {
+  agent: new https.Agent({ keepAlive: true }),
+};
+const app = express()
+  .use(express.json())
+  .use(express.urlencoded({ extended: false }))
+  .use('/', messageflow(config, options));
+
+app.listen(PORT, async () => {
+    /** NOTE: Set domain whitelisting on server boots up */
+    await setDomainWhitelisting({
+      url: config.url,
+      pageAccessToken: config.pageAccessToken,
+      domains: [
+        'https://should-whitelist-url.com',
+      ],
+    });
+
+    /** NOTE: Setup messenger profile */
+    await setMessengerProfile({
+      url: config.url,
+      pageAccessToken: config.pageAccessToken,
+      body: {
+        get_started: {
+          payload: 'FACEBOOK_WELCOME',
+        },
+      },
+    });
+
+    console.info(`@ Express server running at port ${PORT}...`;
+  });
+```
+
+**src/on-message-handler**
+
+```js
+async function onMessageHandler(sender, text) {
+  try {
+    // Handler message text here...
+  } catch (e) {
+    throw e;
+  }
+}
+
+module.exports = onMessageHandler;
+```
+
+**src/on-postback-handler**
+
+```js
+async function onPostbackHandler(sender, postback) {
+  try {
+    // Handler postback payload here...
+  } catch (e) {
+    throw e;
+  }
+}
+
+module.exports = onPostbackHandler;
+```
+
+**src/on-quick-reply-handler**
+
+```js
+async function onQuickReplyHandler(sender, postback) {
+  try {
+    // Handler quick reply here...
+  } catch (e) {
+    throw e;
+  }
+}
+
+module.exports = onQuickReplyHandler;
 ```
 
 #### Native ES modules or TypeScript
 
-```ts
+**src/server.js**
 
+```ts
+// @ts-check
+
+/** Import project dependencies */
+import https from 'https';
+import express from 'express';
+
+/** Import other modules */
+import messageflow from 'fb.me';
+import setMessengerProfile from 'fb.me/set-messenger-profile';
+import setDomainWhitelisting from 'fb.me/set-domain-whitelisting';
+
+/** Setting up */
+const PORT = process.env.PORT;
+const config = {
+  appId: '<FB_APP_ID>',
+  pageAccessToken: '<FB_PAGE_ACCESS_TOKEN>',
+  pageId: '<FB_PAGE_ID>',
+  url: '<FB_GRAPH_URL>',
+  verifyToken: 'FB_VERIFY_TOKEN',
+
+  fetchTimeout: 599e3,
+  notificationType: 'REGULAR',
+  typingDelay: 5e2,
+  onMessage: onMessageHandler,
+  onPostback: onPostbackHandler,
+  onQuickReply: onQuickReplyHandler,
+};
+const options = {
+  agent: new https.Agent({ keepAlive: true }),
+};
+const app = express()
+  .use(express.json())
+  .use(express.urlencoded({ extended: false }))
+  .use('/', messageflow(config, options));
+
+app.listen(PORT, async () => {
+    /** NOTE: Set domain whitelisting on server boots up */
+    await setDomainWhitelisting({
+      url: config.url,
+      pageAccessToken: config.pageAccessToken,
+      domains: [
+        'https://should-whitelist-url.com',
+      ],
+    });
+
+    /** NOTE: Setup messenger profile */
+    await setMessengerProfile({
+      url: config.url,
+      pageAccessToken: config.pageAccessToken,
+      body: {
+        get_started: {
+          payload: 'FACEBOOK_WELCOME',
+        },
+      },
+    });
+
+    console.info(`@ Express server running at port ${PORT}...`;
+  });
+```
+
+**src/on-message-handler**
+
+```js
+// @ts-check
+
+export async function onMessageHandler(sender, text) {
+  try {
+    // Handler message text here...
+  } catch (e) {
+    throw e;
+  }
+}
+
+export default onMessageHandler;
+```
+
+**src/on-postback-handler**
+
+```js
+// @ts-check
+
+export async function onPostbackHandler(sender, postback) {
+  try {
+    // Handler postback payload here...
+  } catch (e) {
+    throw e;
+  }
+}
+
+export default onPostbackHandler;
+```
+
+**src/on-quick-reply-handler**
+
+```js
+// @ts-check
+
+export async function onQuickReplyHandler(sender, postback) {
+  try {
+    // Handler quick reply here...
+  } catch (e) {
+    throw e;
+  }
+}
+
+export default onQuickReplyHandler;
 ```
 
 ## API Reference

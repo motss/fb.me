@@ -41,4 +41,13 @@ export function messageflow(
     .use('/', handleWebhook(config, options));
 }
 
+export * from './handle-messenger-code';
+export * from './handle-receive-message';
+export * from './handle-receive-postback';
+export * from './handle-webhook';
+export * from './messenger-profile';
+export * from './set-domain-whitelisting';
+export * from './set-messenger-code';
+export * from './verify-setup';
+
 export default messageflow;
