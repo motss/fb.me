@@ -33,10 +33,32 @@
 
 ## Table of contents
 
+  - [Pre-requisites](#pre-requisites)
+  - [Setup](#setup)
+    - [Install](#install)
+    - [Usage](#usage)
+      - [Node.js](#nodejs)
+      - [Native ES modules or TypeScript](#native-es-modules-or-typescript)
+  - [API Reference](#api-reference)
+    - [MessageflowConfig](#messageflowconfig)
+    - [FacebookMessageEvent](#facebookmessageevent)
+    - [HandleMessengerCodeResponse](#handlemessengercoderesponse)
+    - [messengerCode(appConfig)](#messengercodeappconfig)
+    - [verifySetup(verifyToken)](#verifysetupverifytoken)
+    - [webhook(appConfig[, options])](#webhookappconfig-options)
+    - [handleDomainWhitelisting(url, pageAccessToken[, domains, options])](#handledomainwhitelistingurl-pageaccesstoken-domains-options)
+    - [handleMessengerCode(url, pageAccessToken[, ref, imageSize, options])](#handlemessengercodeurl-pageaccesstoken-ref-imagesize-options)
+    - [deleteMessengerProfile(url, pageAccessToken, fields[, options])](#deletemessengerprofileurl-pageaccesstoken-fields-options)
+    - [getMessengerProfile(url, pageAccessToken, fields[, options])](#getmessengerprofileurl-pageaccesstoken-fields-options)
+    - [setMessengerProfile(url, pageAccessToken, body[, options])](#setmessengerprofileurl-pageaccesstoken-body-options)
+    - [handleReceiveMessage(appConfig, event[, options])](#handlereceivemessageappconfig-event-options)
+    - [handleReceivePostback(appConfig, event[, options])](#handlereceivepostbackappconfig-event-options)
+  - [License](#license)
+
 ## Pre-requisites
 
-- [Node.js][node-js-url] >= 8.9.0
-- [NPM][npm-url] >= 5.5.1 ([NPM][npm-url] comes with [Node.js][node-js-url] so there is no need to install separately.)
+  - [Node.js][node-js-url] >= 8.9.0
+  - [NPM][npm-url] >= 5.5.1 ([NPM][npm-url] comes with [Node.js][node-js-url] so there is no need to install separately.)
 
 ## Setup
 
@@ -61,8 +83,8 @@ const express = require('express');
 /** Import other modules */
 const {
   messageflow,
-  setMessengerProfile,
-  setDomainWhitelisting
+  handleMessengerProfile,
+  handleDomainWhitelisting
 } = require('fb.me');
 
 /** Setting up */
@@ -91,7 +113,7 @@ const app = express()
 
 app.listen(PORT, async () => {
     /** NOTE: Set domain whitelisting on server boots up */
-    await setDomainWhitelisting({
+    await handleDomainWhitelisting({
       url: config.url,
       pageAccessToken: config.pageAccessToken,
       domains: [
@@ -100,7 +122,7 @@ app.listen(PORT, async () => {
     });
 
     /** NOTE: Setup messenger profile */
-    await setMessengerProfile({
+    await handleMessengerProfile({
       url: config.url,
       pageAccessToken: config.pageAccessToken,
       body: {
@@ -145,7 +167,7 @@ module.exports = onPostbackHandler;
 **src/on-quick-reply-handler**
 
 ```js
-async function onQuickReplyHandler(sender, postback) {
+async function onQuickReplyHandler(sender, quickReply) {
   try {
     // Handler quick reply here...
   } catch (e) {
@@ -169,8 +191,8 @@ import express from 'express';
 
 /** Import other modules */
 import messageflow from 'fb.me';
-import setMessengerProfile from 'fb.me/set-messenger-profile';
-import setDomainWhitelisting from 'fb.me/set-domain-whitelisting';
+import handleMessengerProfile from 'fb.me/handle-messenger-profile';
+import handleDomainWhitelisting from 'fb.me/handle-domain-whitelisting';
 
 /** Setting up */
 const PORT = process.env.PORT;
@@ -198,7 +220,7 @@ const app = express()
 
 app.listen(PORT, async () => {
     /** NOTE: Set domain whitelisting on server boots up */
-    await setDomainWhitelisting({
+    await handleDomainWhitelisting({
       url: config.url,
       pageAccessToken: config.pageAccessToken,
       domains: [
@@ -207,7 +229,7 @@ app.listen(PORT, async () => {
     });
 
     /** NOTE: Setup messenger profile */
-    await setMessengerProfile({
+    await handleMessengerProfile({
       url: config.url,
       pageAccessToken: config.pageAccessToken,
       body: {
@@ -258,7 +280,7 @@ export default onPostbackHandler;
 ```js
 // @ts-check
 
-export async function onQuickReplyHandler(sender, postback) {
+export async function onQuickReplyHandler(sender, quickReply) {
   try {
     // Handler quick reply here...
   } catch (e) {
@@ -271,10 +293,114 @@ export default onQuickReplyHandler;
 
 ## API Reference
 
-### greeting(name)
+### MessageflowConfig
 
-  - name <[string][string-mdn-url]> Name of the person to greet at.
-  - returns: <[Promise][promise-mdn-url]<[string][string-mdn-url]>> Promise which resolves with a greeting message.
+  - `appId` <[string][string-mdn-url]> Facebook Application ID.
+  - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
+  - `pageId` <[string][string-mdn-url]> Facebook Page ID.
+  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `verifyToken` <[string][string-mdn-url]> Facebook verify token.
+  - `fetchTimeout` <[number][number-mdn-url]> Optional timeout for HTTP requests.
+  - `notificationType` <[string][string-mdn-url]> Optional notification type.
+  - `typingDelay` <[number][number-mdn-url]> Optional delay in between messages.
+
+### FacebookMessageEvent
+
+  - `message` <[Object][object-mdn-url]> Message object.
+    - `mid` <[string][string-mdn-url]> Message ID.
+    - `seq` <[string][string-mdn-url]> Sequence number.
+    - `quick_reply` <[Object][object-mdn-url]> Optional custom data provided by the sending app. _A `quick_reply` payload is only provided with a text message when the user tap on a [Quick Replies][quick-replies-url] button._
+      - `payload` <[string][string-mdn-url]> Custom data provided by the app.
+    - `attachment` <[Object][object-mdn-url]> Optional array containing attachment data.
+      - `type` <[string][string-mdn-url]> `audio`, `fallback`, `file`, `image`, `location` or `video`.
+      - `payload` <[Object][object-mdn-url]> `multimedia` or `location` payload.
+        - `url` <[string][string-mdn-url]> URL of the file. _A `url` payload is only provided with a `multimedia` payload._
+        - `coordinates` <[Object][object-mdn-url]> Coordinates of a location. _A `coordinates` payload is only provided with a `location` payload._
+          - `lat` <[number][number-mdn-url]> Latitude.
+          - `long` <[number][number-mdn-url]> Longitude.
+    - `text` <[string][string-mdn-url]> Optional text of the message. _A `text` is only provided when the event is a text message event._
+
+### HandleMessengerCodeResponse
+
+  - `uri` <[string][string-mdn-url]> URL to the generated messenger code.
+
+___
+
+### messengerCode(appConfig)
+
+  - `appConfig` <[MessageflowConfig][messageflowconfig-url]> Application configuration.
+  - returns: `express.Router` an [Express][expressjs-url] router which contains a HTTP GET route. The route handler returns a promise which resolves with a successful response in the type of [HandleMessengerCodeResponse][handlemessengercoderesponse-url] that contains the URL to the image of the generated messenger code.
+
+### verifySetup(verifyToken)
+
+  - `verifyToken` <[string][string-mdn-url]> Facebook verify token.
+  - returns: `express.Router` an [Express][expressjs-url] router which contains a HTTP GET route. The route handler sends the `hub.challenge` token from the payload sent by Facebook HTTP server to verify the webhook setup.
+
+### webhook(appConfig[, options])
+
+  - `appConfig` <[MessageflowConfig][messageflowconfig-url]> Application configuration.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: `express.Router` an [Express][expressjs-url] router which contains a HTTP POST route. The route handle will forward the correct message based on its message type to the corresponding event handler to do more stuff on the received message. A `message` message will be forwarded to the [handleReceiveMessage][handlereceivemessageappconfig-event-options-url] method that needs to be defined by the user in the `appConfig` whereas a `postback` message will handled by the [handleReceivePostback][handlereceivepostbackappconfig-event-options-url] method.
+
+### handleDomainWhitelisting(url, pageAccessToken[, domains, options])
+
+  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
+  - `domains` <[string][string-mdn-url]|[Array][array-mdn-url]&lt;[string][string-mdn-url]&gt;> 1 domain string or a list of domains that needs to be whitelisted.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;[Object][object-mdn-url]&gt;> Promise which resolves with status of the operation.
+    - `result` <[string][string-mdn-url]> If the operation is successful, the value is `Successfully updated whitelisted domains`.
+
+### handleMessengerCode(url, pageAccessToken[, ref, imageSize, options])
+
+  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
+  - `ref` <[string][string-mdn-url]> Optional `ref` string to pass to the chatbot when it is opened via scanning the code on Messenger. 250 character limit and accepts only these characters: `a-z A-Z 0-9 +/=-.:_`.
+  - `imageSize` <[string][string-mdn-url]> Optional image size, in pixels. Supported range: 100 - 2000px. Defaults to 1000px.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;[Object][object-mdn-url]&gt;> Promise which resolves with an object that contains the URL to the image of the generated messenger code.
+    - `uri` <[string][string-mdn-url]> URL to the image of the generated messenger code.
+
+### deleteMessengerProfile(url, pageAccessToken, fields[, options])
+
+  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
+  - `fields` <[Array][array-mdn-url]&lt;[string][string-mdn-url]&gt;> A list of [Messenger Profile properties][messenger-profile-api-url] to delete.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;[Object][object-mdn-url]&gt;> Promise which resolves with status of the operation.
+    - `result` <[string][string-mdn-url]> If the operation is successful, the value is `success`.
+
+### getMessengerProfile(url, pageAccessToken, fields[, options])
+
+  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
+  - `fields` <[string][string-mdn-url]|[Array][array-mdn-url]&lt;[string][string-mdn-url]&gt;> A list/ comma-separated list of [Messenger Profile properties][messenger-profile-api-url] to retrieve, e.g. `account_linking_url,persistent_menu,get_started,greeting,whitelisted_domains,payment_settings,target_audience,home_url`
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;[Object][object-mdn-url]&gt;> Promise which resolves with status of the operation.
+    - `result` <[string][string-mdn-url]> If the operation is successful, the value is `success`.
+
+### setMessengerProfile(url, pageAccessToken, body[, options])
+
+  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
+  - `body` <[Object][object-mdn-url]> Set the value of one or more [Messenger Profile properties][messenger-profile-api-url] in the format of `'<PROPERTY_NAME>': '<NEW_PROPERTY_VALUE>'`. Only properties specified in the request body will be overwritten.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;[Object][object-mdn-url]&gt;> Promise which resolves with status of the operation.
+    - `result` <[string][string-mdn-url]> If the operation is successful, the value is `success`.
+
+### handleReceiveMessage(appConfig, event[, options])
+
+  - `appConfig` <[MessageflowConfig][messageflowconfig-url]> Application configuration.
+  - `event` <[FacebookMessageEvent][facebookmessageevent-url]> Facebook message event. See [messages Webhook Event Reference][messages-webhook-event-reference-url] for more details.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;`any`&gt;> The method will forward the correct message based on its message type to the corresponding event handler to do more stuff on the received message. A `text` message will be forwarded to the `onMessage` method that needs to be defined by the user in the `appConfig` whereas a `quickReply` message will handled by the `onQuickReply` method.
+
+### handleReceivePostback(appConfig, event[, options])
+
+  - `appConfig` <[MessageflowConfig][messageflowconfig-url]> Application configuration.
+  - `event` <[FacebookMessageEvent][facebookmessageevent-url]> Facebook message event. See [messages Webhook Event Reference][messages-webhook-event-reference-url] for more details.
+  - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
+  - returns: <[Promise][promise-mdn-url]&lt;`any`&gt;> The method will forward all postback payload to a user-defined `onPostback` method in `appConfig`.
 
 ## License
 
@@ -288,8 +414,22 @@ export default onQuickReplyHandler;
 [node-js-url]: https://nodejs.org
 [npm-url]: https://www.npmjs.com
 [node-releases-url]: https://nodejs.org/en/download/releases
-[string-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+[node-fetch-options-url]: https://github.com/bitinn/node-fetch#fetch-options
+[messages-webhook-event-reference-url]: https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/messages#location_payload
+[quick-replies-url]: https://developers.facebook.com/docs/messenger-platform/send-messages/quick-replies
+[messenger-profile-api-url]: https://developers.facebook.com/docs/messenger-platform/reference/messenger-profile-api
+
+[messageflowconfig-url]: #messageflowconfig
+[handlemessengercoderesponse-url]: #handlemessengercoderesponse
+[facebookmessageevent-url]: #facebookmessageevent
+[handlereceivemessageappconfig-event-options-url]: #handlereceivemessageappconfig-event-options
+[handlereceivepostbackappconfig-event-options-url]: #handlereceivepostbackappconfig-event-options
+
+[array-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+[number-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
+[object-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 [promise-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[string-mdn-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
 
 
 

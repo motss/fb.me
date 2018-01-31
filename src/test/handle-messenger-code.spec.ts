@@ -1,87 +1,101 @@
 // @ts-check
 
-/** Import typings */
-import { MessageflowConfig } from '../';
-
-/** Import project dependencies */
-import express from 'express';
-import rq from 'supertest';
-
 /** Import other modules */
 import handleMessengerCode from '../handle-messenger-code';
 import * as expected from './helper/expected';
 import locky, { closeLocky } from './helper/locky';
 import { testAppConfig } from './helper/test-config';
 
-describe('handle-webhook', () => {
-  beforeEach(async () => await locky(testAppConfig));
+beforeEach(async () => {
+  try {
+    return await locky(testAppConfig);
+  } catch (e) {
+    throw e;
+  }
+});
 
-  afterEach(async () => await closeLocky());
+afterAll(async () => {
+  try {
+    return await closeLocky();
+  } catch (e) {
+    throw e;
+  }
+});
 
-  const mockApp = express()
-    .get('/', handleMessengerCode(testAppConfig));
-  const mockSend = jest.fn(d => d);
-  const mockRes = {
-    headersSent: true,
-    status: () => mockRes,
-    send: mockSend,
-  };
-  const sentQuery = {
-    ref: '',
-    image_size: 1000,
-  };
-
-  test('Parameter appConfig is undefined', async () => {
+describe('set-messenger-code', () => {
+  test('Parameter url is invalid', async () => {
     try {
-      const mockAppForTest = express()
-        .get('/', handleMessengerCode(null));
-      const d = await rq(mockAppForTest)
-        .get('/')
-        .query({ ...sentQuery })
-        .expect(400);
-
-      expect(d.body).toEqual({
-        error: {
-          message: 'Parameter appConfig is undefined',
-        },
+      await handleMessengerCode({
+        url: null,
+        pageAccessToken: testAppConfig.pageAccessToken,
       });
     } catch (e) {
-      throw e;
+      expect(e instanceof TypeError).toBe(true);
+      expect(e.message)
+        .toEqual('Parameter url is invalid');
     }
   });
 
-  test('not found error', async () => {
+  test('Parameter pageAccessToken is invalid', async () => {
     try {
-      const mockAppForTest = express()
-        .get('/', handleMessengerCode({
-          url: testAppConfig.url,
-          pageAccessToken: `error-${testAppConfig.pageAccessToken}`,
-        } as MessageflowConfig));
-      const d = await rq(mockAppForTest)
-        .get('/')
-        .query({ ...sentQuery })
-        .expect(404);
-
-      expect(d.body).toEqual({
-        error: {
-          message: 'Not found',
-        },
+      await handleMessengerCode({
+        url: testAppConfig.url,
+        pageAccessToken: null,
       });
     } catch (e) {
-      throw e;
+      expect(e instanceof TypeError).toBe(true);
+      expect(e.message).toEqual('Parameter pageAccessToken is invalid');
+    }
+  });
+
+  test('Param image_size must be a number less than or equal to 2000', async () => {
+    try {
+      await handleMessengerCode({
+        url: testAppConfig.url,
+        pageAccessToken: testAppConfig.pageAccessToken,
+        ref: 'abc+=/',
+        imageSize: 9999,
+      });
+    } catch (e) {
+      expect(e).toEqual({ ...expected.messengerCode.invalidImageSize });
+    }
+  });
+
+  test('An unknown error has occurred', async () => {
+    try {
+      await handleMessengerCode({
+        url: testAppConfig.url,
+        pageAccessToken: testAppConfig.pageAccessToken,
+        ref: 'abc+=*',
+      });
+    } catch (e) {
+      expect(e).toEqual({ ...expected.messengerCode.unknownError });
     }
   });
 
   test('handleMessengerCode works', async () => {
     try {
-      const d = await rq(mockApp)
-        .get('/')
-        .query({ ...sentQuery })
-        .expect(200);
-
-      expect(d.body).toEqual({
-        ...expected.messengerCode.codedSuccessfully,
+      const d = await handleMessengerCode({
+        url: testAppConfig.url,
+        pageAccessToken: testAppConfig.pageAccessToken,
       });
+
+      expect(d).toEqual({ ...expected.messengerCode.codedSuccessfully });
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  test('handleMessengerCode works with ref + imageSize', async () => {
+    try {
+      const d = await handleMessengerCode({
+        url: testAppConfig.url,
+        pageAccessToken: testAppConfig.pageAccessToken,
+        ref: 'abc+=/',
+        imageSize: 1999,
+      });
+
+      expect(d).toEqual({ ...expected.messengerCode.codedSuccessfully });
     } catch (e) {
       throw e;
     }

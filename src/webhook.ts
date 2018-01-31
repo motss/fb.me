@@ -1,12 +1,5 @@
 // @ts-check
 
-export declare interface WebhookResponseEntry {
-  messaging: FacebookPostbackEvent[] | FacebookMessageEvent[];
-}
-export declare interface WebhookResponse {
-  object: string | 'page';
-  entry: WebhookResponseEntry[];
-}
 export declare interface FacebookEventId {
   id: string;
 }
@@ -18,8 +11,6 @@ export declare interface FacebookEvent {
 /** Import typings */
 import { RequestInit } from 'node-fetch';
 import { MessageflowConfig } from './';
-import { FacebookMessageEvent } from './handle-receive-message';
-import { FacebookPostbackEvent } from './handle-receive-postback';
 
 /** Import project dependencies */
 import express from 'express';
@@ -28,12 +19,12 @@ import express from 'express';
 import handleReceiveMessage from './handle-receive-message';
 import handleReceivePostback from './handle-receive-postback';
 
-export async function postWebhook(
+export async function handleWebhook(
   config: MessageflowConfig,
   options: RequestInit = {} as RequestInit,
   req: express.Request,
   res: express.Response
-): Promise<express.Response | any[]> {
+): Promise<any[]> {
   try {
     const reqBody = req.body;
     const object = reqBody && reqBody.object;
@@ -98,7 +89,7 @@ export async function postWebhook(
   }
 }
 
-export function handleWebhook(
+export function webhook(
   appConfig: MessageflowConfig,
   options?: RequestInit
 ): express.Router {
@@ -109,7 +100,7 @@ export function handleWebhook(
           throw new TypeError('Parameter appConfig is undefined');
         }
 
-        return await postWebhook(appConfig, options, req, res);
+        return await handleWebhook(appConfig, options, req, res);
       } catch (e) {
         /**
          * NOTE:
@@ -130,4 +121,4 @@ export function handleWebhook(
     });
 }
 
-export default handleWebhook;
+export default webhook;

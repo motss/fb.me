@@ -1,7 +1,7 @@
 // @ts-check
 
 /** Import other modules */
-import setDomainWhitelisting from '../set-domain-whitelisting';
+import handleDomainWhitelisting from '../handle-domain-whitelisting';
 import * as expected from './helper/expected';
 import locky, { closeLocky } from './helper/locky';
 import { testAppConfig } from './helper/test-config';
@@ -25,7 +25,7 @@ afterAll(async () => {
 describe('set-domain-whitelisting', () => {
   test('Parameter url is invalid', async () => {
     try {
-      await setDomainWhitelisting({
+      await handleDomainWhitelisting({
         url: null,
         domains: [
           '/haha',
@@ -41,7 +41,7 @@ describe('set-domain-whitelisting', () => {
 
   test('Parameter pageAccessToken is invalid', async () => {
     try {
-      await setDomainWhitelisting({
+      await handleDomainWhitelisting({
         url: testAppConfig.url,
         domains: 'https://should-whiteliste.com',
         pageAccessToken: null,
@@ -54,7 +54,7 @@ describe('set-domain-whitelisting', () => {
 
   test('Parameter domains has to be either a string or an array of strings', async () => {
     try {
-      await setDomainWhitelisting({
+      await handleDomainWhitelisting({
         url: testAppConfig.url,
         domains: null,
         pageAccessToken: testAppConfig.pageAccessToken,
@@ -68,7 +68,7 @@ describe('set-domain-whitelisting', () => {
 
   test('whitelisted_domains[0] should represent a valid URL', async () => {
     try {
-      await setDomainWhitelisting({
+      await handleDomainWhitelisting({
         url: testAppConfig.url,
         domains: [
           '/haha',
@@ -80,9 +80,9 @@ describe('set-domain-whitelisting', () => {
     }
   });
 
-  test('setDomainWhitelisting works when no domain is specified', async () => {
+  test('handleDomainWhitelisting works when no domain is specified', async () => {
     try {
-      const d = await setDomainWhitelisting({
+      const d = await handleDomainWhitelisting({
         url: testAppConfig.url,
         pageAccessToken: testAppConfig.pageAccessToken,
       });
@@ -93,9 +93,9 @@ describe('set-domain-whitelisting', () => {
     }
   });
 
-  test('setDomainWhitelisting works for a domain string', async () => {
+  test('handleDomainWhitelisting works for a domain string', async () => {
     try {
-      const d = await setDomainWhitelisting({
+      const d = await handleDomainWhitelisting({
         url: testAppConfig.url,
         domains: 'https://should-whitelist.com',
         pageAccessToken: testAppConfig.pageAccessToken,
@@ -107,9 +107,9 @@ describe('set-domain-whitelisting', () => {
     }
   });
 
-  test('setDomainWhitelisting works for an array of domain strings', async () => {
+  test('handleDomainWhitelisting works for an array of domain strings', async () => {
     try {
-      const d = await setDomainWhitelisting({
+      const d = await handleDomainWhitelisting({
         url: testAppConfig.url,
         domains: [
           'https://should-whitelist.com',

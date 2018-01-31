@@ -5,14 +5,14 @@ export declare interface MessengerProfileParams {
   pageAccessToken: string;
   options?: RequestInit;
 }
-export declare interface SetMessengerProfileParams extends MessengerProfileParams {
-  body: { [key: string]: any; };
+export declare interface DeleteMessengerProfileParams extends MessengerProfileParams {
+  fields: { [key: string]: any };
 }
 export declare interface GetMessengerProfileParams extends MessengerProfileParams {
   fields?: string | string[];
 }
-export declare interface DeleteMessengerProfileParams extends MessengerProfileParams {
-  fields: { [key: string]: any };
+export declare interface SetMessengerProfileParams extends MessengerProfileParams {
+  body: { [key: string]: any; };
 }
 
 /** Import typings */
@@ -21,12 +21,12 @@ import { RequestInit } from 'node-fetch';
 /** Import project dependencies */
 import { fetchAsJson } from 'fetch-as';
 
-export async function setMessengerProfile({
+export async function deleteMessengerProfile({
   url,
   pageAccessToken,
-  body,
+  fields,
   options = {} as RequestInit,
-}: SetMessengerProfileParams) {
+}: DeleteMessengerProfileParams) {
   try {
     if (typeof url !== 'string' || !url.length) {
       throw new TypeError('Parameter url is invalid');
@@ -38,12 +38,12 @@ export async function setMessengerProfile({
 
     const uri = `${url}/me/messenger_profile?access_token=${pageAccessToken}`;
     const fetchOpts = {
-      method: 'POST',
+      method: 'DELETE',
       headers: {
         ...(options.headers || {}),
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ ...body }),
+      body: JSON.stringify({ fields }),
     };
     const d = await fetchAsJson(uri, fetchOpts);
 
@@ -99,12 +99,12 @@ export async function getMessengerProfile({
   }
 }
 
-export async function deleteMessengerProfile({
+export async function setMessengerProfile({
   url,
   pageAccessToken,
-  fields,
+  body,
   options = {} as RequestInit,
-}: DeleteMessengerProfileParams) {
+}: SetMessengerProfileParams) {
   try {
     if (typeof url !== 'string' || !url.length) {
       throw new TypeError('Parameter url is invalid');
@@ -116,12 +116,12 @@ export async function deleteMessengerProfile({
 
     const uri = `${url}/me/messenger_profile?access_token=${pageAccessToken}`;
     const fetchOpts = {
-      method: 'DELETE',
+      method: 'POST',
       headers: {
         ...(options.headers || {}),
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ fields }),
+      body: JSON.stringify({ ...body }),
     };
     const d = await fetchAsJson(uri, fetchOpts);
 
@@ -137,7 +137,7 @@ export async function deleteMessengerProfile({
 }
 
 export default {
-  set: setMessengerProfile,
-  get: getMessengerProfile,
   delete: deleteMessengerProfile,
+  get: getMessengerProfile,
+  set: setMessengerProfile,
 };

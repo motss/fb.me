@@ -10,7 +10,7 @@ export declare interface FacebookMessageEventMessage {
   mid: string;
   seq: number;
   quick_reply?: MessagePayload;
-  attachements?: MessageAttachments;
+  attachments?: MessageAttachments;
   text?: string; /** FIXME: Can this be optional when it's a quick reply? */
 }
 export declare interface FacebookMessageEvent extends FacebookEvent {
@@ -20,7 +20,7 @@ export declare interface FacebookMessageEvent extends FacebookEvent {
 /** Import typings */
 import { RequestInit } from 'node-fetch';
 import { MessageflowConfig } from './';
-import { FacebookEvent } from './handle-webhook';
+import { FacebookEvent } from './webhook';
 
 /** Import other modules */
 import sendAsReadReceipt from '@messageflow/send-as/send-as-read-receipt';

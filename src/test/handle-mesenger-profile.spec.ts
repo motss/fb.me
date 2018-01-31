@@ -5,7 +5,7 @@ import {
   deleteMessengerProfile,
   getMessengerProfile,
   setMessengerProfile,
-} from '../messenger-profile';
+} from '../handle-messenger-profile';
 import * as expected from './helper/expected';
 import locky, { closeLocky } from './helper/locky';
 import { testAppConfig } from './helper/test-config';

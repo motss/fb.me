@@ -7,7 +7,7 @@ import rq from 'supertest';
 /** Import other modules */
 import handleReceiveMessage from '../handle-receive-message';
 import handleReceivePostback from '../handle-receive-postback';
-import handleWebhook, { postWebhook } from '../handle-webhook';
+import webhook, { handleWebhook } from '../webhook';
 import { testAppConfig } from './helper/test-config';
 
 /** Mock functions with Jest */
@@ -33,7 +33,7 @@ describe('handle-webhook', () => {
   const mockApp = express()
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
-    .use('/', handleWebhook(testAppConfig));
+    .use('/', webhook(testAppConfig));
   const mockSend = jest.fn(d => d);
   const mockRes = {
     headersSent: true,
@@ -46,7 +46,7 @@ describe('handle-webhook', () => {
       const mockAppForTest = express()
         .use(express.json())
         .use(express.urlencoded({ extended: false }))
-        .use('/', handleWebhook(null));
+        .use('/', webhook(null));
       const d = await rq(mockAppForTest)
         .post('/')
         .send({ test: 'Hello, World!' })
@@ -148,7 +148,7 @@ describe('handle-webhook', () => {
           ],
         },
       };
-      await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
     } catch (e) {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
@@ -169,7 +169,7 @@ describe('handle-webhook', () => {
           ],
         },
       };
-      await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
     } catch (e) {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
@@ -193,7 +193,7 @@ describe('handle-webhook', () => {
           ],
         },
       };
-      await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
     } catch (e) {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
@@ -218,7 +218,7 @@ describe('handle-webhook', () => {
           ],
         },
       };
-      const d = await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      const d = await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
 
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
@@ -251,7 +251,7 @@ describe('handle-webhook', () => {
         },
       };
 
-      await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
 
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
@@ -291,7 +291,7 @@ describe('handle-webhook', () => {
         },
       };
 
-      await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
 
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
@@ -332,7 +332,7 @@ describe('handle-webhook', () => {
         },
       };
 
-      await postWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
 
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');

@@ -1,10 +1,9 @@
 // @ts-check
 
-export declare interface SetMessengerCodeParams {
+export declare interface HandleDomainWhitelistingParams {
   url: string;
   pageAccessToken: string;
-  ref?: string; /** 250 char limit. Valid char: a-z A-Z 0-9 +/=-.:_ */
-  imageSize?: number; /** 100-2000px. Defaults to 1000px */
+  domains?: string | string[];
   options?: RequestInit;
 }
 
@@ -14,13 +13,12 @@ import { RequestInit } from 'node-fetch';
 /** Import project dependencies */
 import { fetchAsJson } from 'fetch-as';
 
-export async function setMessengerCode({
+export async function handleDomainWhitelisting({
   url,
   pageAccessToken,
-  ref,
-  imageSize = 1000,
+  domains = [],
   options = {} as RequestInit,
-}: SetMessengerCodeParams) {
+}: HandleDomainWhitelistingParams) {
   try {
     if (typeof url !== 'string' || !url.length) {
       throw new TypeError('Parameter url is invalid');
@@ -30,7 +28,11 @@ export async function setMessengerCode({
       throw new TypeError('Parameter pageAccessToken is invalid');
     }
 
-    const uri = `${url}/me/messenger_codes?access_token=${pageAccessToken}`;
+    if (typeof domains !== 'string' && !Array.isArray(domains)) {
+      throw new TypeError('Parameter domains has to be either a string or an array of strings');
+    }
+
+    const uri = `${url}/me/thread_settings?access_token=${pageAccessToken}`;
     const fetchOpts = {
       method: 'POST',
       headers: {
@@ -38,14 +40,22 @@ export async function setMessengerCode({
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        type: 'standard',
-        data: { ref },
-        image_size: imageSize,
+        setting_type: 'domain_whitelisting',
+        domain_action_type: 'add',
+        whitelisted_domains: [
+          ...(
+            Array.isArray(domains)
+              ? domains
+              : [domains]
+          ),
+          'https://www.messenger.com',
+          'https://www.facebook.com',
+        ],
       }),
     };
     const d = await fetchAsJson(uri, fetchOpts);
 
-    /** NOTE: Throw error if failed to set messenger code */
+    /** NOTE: Throw error if failed to whitelist domains */
     if (d.status > 399) {
       throw d.error;
     }
@@ -56,4 +66,4 @@ export async function setMessengerCode({
   }
 }
 
-export default setMessengerCode;
+export default handleDomainWhitelisting;
