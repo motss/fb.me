@@ -11,7 +11,7 @@ export declare interface FacebookPostbackEvent extends FacebookEvent {
 /** Import typings */
 import { RequestInit } from 'node-fetch';
 import { MessageflowConfig } from './';
-import { FacebookEvent } from './handle-webhook';
+import { FacebookEvent } from './webhook';
 
 /** Import other modules */
 import sendReadReceipt from '@messageflow/send-as/send-as-read-receipt';
