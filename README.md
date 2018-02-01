@@ -97,8 +97,8 @@ const https = require('https');
 const express = require('express');
 const {
   messageflow,
-  handleMessengerProfile,
-  handleDomainWhitelisting
+  handleDomainWhitelisting,
+  setMessengerProfile,
 } = require('fb.me');
 
 /** Import other modules */
@@ -132,6 +132,13 @@ const app = express()
   .use(express.urlencoded({ extended: false }))
   .use('/', messageflow(config, options));
 
+/** NOTE: Custom error handling */
+app.use((err, req, res, next) => {
+  console.error('🚨 Handle error', err);
+
+  return res.send(err instanceof Error ? err.message : err);
+});
+
 app.listen(PORT, async () => {
     /** NOTE: Set domain whitelisting on server boots up */
     await handleDomainWhitelisting({
@@ -143,7 +150,7 @@ app.listen(PORT, async () => {
     });
 
     /** NOTE: Setup messenger profile */
-    await handleMessengerProfile({
+    await setMessengerProfile({
       url: config.url,
       pageAccessToken: config.pageAccessToken,
       body: {
@@ -202,6 +209,13 @@ const app = express()
   .use(express.urlencoded({ extended: false }))
   .use('/', messageflow(config, options));
 
+/** NOTE: Custom error handling */
+app.use((err, req, res, next) => {
+  console.error('🚨 Handle error', err);
+
+  return res.send(err instanceof Error ? err.message : err);
+});
+
 app.listen(PORT, async () => {
     /** NOTE: Set domain whitelisting on server boots up */
     await handleDomainWhitelisting({
@@ -213,7 +227,7 @@ app.listen(PORT, async () => {
     });
 
     /** NOTE: Setup messenger profile */
-    await handleMessengerProfile({
+    await handleMessengerProfile.set({
       url: config.url,
       pageAccessToken: config.pageAccessToken,
       body: {

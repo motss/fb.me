@@ -14,9 +14,7 @@ yarn-error.log*
 # folders
 ./test*/
 coverage*/
-demo*/
 node_modules/
-src/
 
 # .js files
 gulpfile*.js

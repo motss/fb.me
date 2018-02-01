@@ -56,8 +56,8 @@ const BABELRC = {
 
 gulp.task('lint', () =>
   gulp.src([
-    `${SRC}/**/*.ts`,
-    `${SRC}/**/*.tsx`,
+    `${SRC}/**/*.ts*`,
+    ...IGNORE_DIR.map(n => `${isProd ? '!' : ''}${n}/**/*.ts*`),
   ])
     .pipe(lint({
       configuration: `./tslint${
@@ -108,6 +108,19 @@ gulp.task('watch', () => {
     `${SRC}/**/*.ts`,
     `${SRC}/**/*.tsx`,
   ], ['build']);
+});
+
+gulp.task('demo:before', () => {
+  return del([
+    'dist',
+  ]);
+});
+gulp.task('demo', ['demo:before'], () => {
+  return gulp.src([
+    'src/demo/**/*.ts*',
+  ])
+    .pipe(ts.createProject('./tsconfig.json')())
+    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('build', ['clean'], cb => sq(...[

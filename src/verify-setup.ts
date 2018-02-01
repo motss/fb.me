@@ -47,20 +47,6 @@ export function verifySetup(verifyToken: string): express.Router {
 
         return await getVerifySetup(verifyToken, req, res);
       } catch (e) {
-        /**
-         * NOTE:
-         * Assuming headers are not sent yet,
-         * - returns '400 Bad Request' for all TypeErrors.
-         * - responds with '403 Forbidden' if verify tokens do not match.
-         */
-        const rs = e instanceof TypeError ? 400 : 403;
-
-        res.status(rs).send({
-          error: {
-            message: e.message,
-          },
-        });
-
         return next(e);
       }
     });

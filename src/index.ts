@@ -5,6 +5,7 @@ export interface MessageflowHandlers {
   onQuickReply?<T>(sender: FacebookEventId, quickReply: MessagePayload): Promise<T>;
   onPostback?<T>(sender: FacebookEventId, postback: FacebookPostbackEventPostback): Promise<T>;
 }
+export type NotificationType = 'NO_PUSH' | 'REGULAR' | 'SILENT_PUSH';
 export declare interface MessageflowConfig extends MessageflowHandlers {
   appId: string;
   pageAccessToken: string;
@@ -13,10 +14,7 @@ export declare interface MessageflowConfig extends MessageflowHandlers {
   verifyToken: string;
 
   fetchTimeout?: number;
-  notificationType?:
-    'NO_PUSH' |
-    'REGULAR' |
-    'SILENT_PUSH';
+  notificationType?: NotificationType;
   typingDelay?: number;
 }
 
