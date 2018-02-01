@@ -6,6 +6,7 @@ import express from 'express';
 /** Import other modules */
 import rq from 'supertest';
 import verifySetup, { getVerifySetup } from '../verify-setup';
+import customErrorHandler from './helper/custom-error-handler';
 import fbId from './helper/fb-id';
 
 describe('verify-setup', () => {
@@ -21,7 +22,8 @@ describe('verify-setup', () => {
   test('no verifyToken', async () => {
     try {
       const mockAppForTest = express()
-        .use('/', verifySetup(null));
+        .use('/', verifySetup(null))
+        .use(customErrorHandler);
       const d = await rq(mockAppForTest)
         .get('/')
         .expect(400);
@@ -94,7 +96,11 @@ describe('verify-setup', () => {
 
   test('test error handler', async () => {
     try {
-      const d = await rq(express().use('/', verifySetup(mockFbVerifyToken)))
+      const d = await rq(
+        express()
+          .use('/', verifySetup(mockFbVerifyToken))
+          .use(customErrorHandler)
+      )
         .get('/')
         .query({
           'hub.mode': 'subscribe',
@@ -134,7 +140,11 @@ describe('verify-setup', () => {
 
   test('verifySetup works', async () => {
     try {
-      const d = await rq(express().use('/', verifySetup(mockFbVerifyToken)))
+      const d = await rq(
+        express()
+          .use('/', verifySetup(mockFbVerifyToken))
+          .use(customErrorHandler)
+      )
         .get('/')
         .query({
           'hub.mode': 'subscribe',

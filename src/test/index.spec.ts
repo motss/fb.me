@@ -9,6 +9,7 @@ import rq from 'supertest';
 
 /** Import other modules */
 import messageflow from '../';
+import customErrorHandler from './helper/custom-error-handler';
 import * as expected from './helper/expected';
 import locky, { closeLocky } from './helper/locky';
 import { testAppConfig } from './helper/test-config';
@@ -32,11 +33,16 @@ describe('index', () => {
   const mockApp = express()
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
-    .use('/', messageflow(config));
+    .use('/', messageflow(config))
+    .use(customErrorHandler);
 
   test('nullish config fallback to {}', async () => {
     try {
-      const d = await rq(express().use('/', messageflow()))
+      const d = await rq(
+        express()
+          .use('/', messageflow())
+          .use(customErrorHandler)
+      )
         .get('/')
         .expect(400);
 
@@ -87,6 +93,7 @@ describe('index', () => {
       const d = await rq(
         express()
           .use('/', messageflow(config))
+          .use(customErrorHandler)
       )
         // .get('/messenger-code?ref=haha&image_size=1999')
         .get('/messenger-code')

@@ -8,6 +8,7 @@ import rq from 'supertest';
 import handleReceiveMessage from '../handle-receive-message';
 import handleReceivePostback from '../handle-receive-postback';
 import webhook, { handleWebhook } from '../webhook';
+import customErrorHandler from './helper/custom-error-handler';
 import { testAppConfig } from './helper/test-config';
 
 /** Mock functions with Jest */
@@ -33,7 +34,8 @@ describe('handle-webhook', () => {
   const mockApp = express()
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
-    .use('/', webhook(testAppConfig));
+    .use('/', webhook(testAppConfig))
+    .use(customErrorHandler);
   const mockSend = jest.fn(d => d);
   const mockRes = {
     headersSent: true,
@@ -46,7 +48,8 @@ describe('handle-webhook', () => {
       const mockAppForTest = express()
         .use(express.json())
         .use(express.urlencoded({ extended: false }))
-        .use('/', webhook(null));
+        .use('/', webhook(null))
+        .use(customErrorHandler);
       const d = await rq(mockAppForTest)
         .post('/')
         .send({ test: 'Hello, World!' })

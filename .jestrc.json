@@ -40,6 +40,7 @@
   "collectCoverageFrom": [
     "**/src/**/*.{ts|tsx}",
     "!**/node_modules/**",
+    "!**/src/demo/**/*.{ts|tsx}",
     "!**/src/test/**/*.{ts|tsx}"
   ],
   "verbose": true,
