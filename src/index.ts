@@ -13,7 +13,10 @@ export declare interface MessageflowConfig extends MessageflowHandlers {
   verifyToken: string;
 
   fetchTimeout?: number;
-  notificationType?: string;
+  notificationType?:
+    'NO_PUSH' |
+    'REGULAR' |
+    'SILENT_PUSH';
   typingDelay?: number;
 }
 

@@ -234,10 +234,10 @@ app.listen(PORT, async () => {
   - `appId` <[string][string-mdn-url]> Facebook Application ID.
   - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
   - `pageId` <[string][string-mdn-url]> Facebook Page ID.
-  - `url` <[string][string-mdn-url]> Facebook Graph URL.
+  - `url` <[string][string-mdn-url]> Facebook Graph URL, e.g. `https://graph.facebook.com/v2.11`
   - `verifyToken` <[string][string-mdn-url]> Facebook verify token.
-  - `fetchTimeout` <[number][number-mdn-url]> Optional timeout for HTTP requests.
-  - `notificationType` <[string][string-mdn-url]> Optional notification type.
+  - `fetchTimeout` <[number][number-mdn-url]> Optional timeout for HTTP requests, e.g. `599e3`
+  - `notificationType` <[string][string-mdn-url]> Optional notification type. Possible values: `NO_PUSH`, `REGULAR`, `SILENT_PUSH`.
   - `typingDelay` <[number][number-mdn-url]> Optional delay in between messages.
 
 ### FacebookMessageEvent
@@ -282,7 +282,7 @@ ___
 
   - `url` <[string][string-mdn-url]> Facebook Graph URL.
   - `pageAccessToken` <[string][string-mdn-url]> Facebook page access token.
-  - `domains` <[string][string-mdn-url]|[Array][array-mdn-url]&lt;[string][string-mdn-url]&gt;> 1 domain string or a list of domains that needs to be whitelisted.
+  - `domains` <[string][string-mdn-url]|[Array][array-mdn-url]&lt;[string][string-mdn-url]&gt;> Optional domain string or a list of domains to be whitelisted.
   - `options` <[Object][object-mdn-url]> Optional request options. See [node-fetch options][node-fetch-options-url] for more details.
   - returns: <[Promise][promise-mdn-url]&lt;[Object][object-mdn-url]&gt;> Promise which resolves with status of the operation.
     - `result` <[string][string-mdn-url]> If the operation is successful, the value is `Successfully updated whitelisted domains`.
