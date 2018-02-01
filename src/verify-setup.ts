@@ -27,8 +27,7 @@ export async function getVerifySetup(
     }
 
     if (/^subscribe/i.test(hubMode) && hubVerifyToken === verifyToken) {
-      console.info('WEBHOOK_VERIFIED');
-
+      /** NOTE: WEBHOOK_VERIFIED */
       return res.status(200).send(hubChallenge);
     }
 

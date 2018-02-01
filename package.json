@@ -1,7 +1,7 @@
 {
   "name": "fb.me",
-  "version": "0.0.0",
-  "description": "Express middleware for chatbot development with Facebook Messenger",
+  "version": "0.0.1",
+  "description": "Express app for chatbot development with Facebook Messenger",
   "keywords": [
     "fb.me",
     "node",
@@ -25,7 +25,7 @@
     "check": "npm run lint && npm run nsp",
     "cleanup": "rm -rf gulpfile.js",
     "gulp": "npm run ts && gulp",
-    "lint": "npm run ts && gulp lint && npm run cleanup",
+    "lint": "npm run ts && cross-env NODE_ENV=production gulp lint && npm run cleanup",
     "nsp": "nsp check",
     "prepublishOnly": "npm run check && npm run build",
     "test": "jest --config ./.jestrc.json",
