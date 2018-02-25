@@ -14,10 +14,15 @@ import { MessageflowConfig } from './';
 
 /** Import project dependencies */
 import express from 'express';
+import idx from 'idx';
+import pMapSeries from 'p-map-series';
 
 /** Import other modules */
 import handleReceiveMessage from './handle-receive-message';
 import handleReceivePostback from './handle-receive-postback';
+
+/** Setting up */
+const pms = pMapSeries;
 
 export async function handleWebhook(
   config: MessageflowConfig,
@@ -26,9 +31,8 @@ export async function handleWebhook(
   res: express.Response
 ): Promise<any[]> {
   try {
-    const reqBody = req.body;
-    const object = reqBody && reqBody.object;
-    const entry = reqBody && reqBody.entry;
+    const object = idx(req.body, _ => _.object);
+    const entry = idx(req.body, _ => _.entry);
 
     if (object == null) {
       throw new TypeError('Parameter req[body][object] is missing');
@@ -52,35 +56,59 @@ export async function handleWebhook(
       /**
        * NOTE: Iterate over each entry and there might be multiple if batched.
        */
-      const messageEvents = await Promise.all(entry.map(async (pageEntry, i) => {
-        const messaging = pageEntry && pageEntry.messaging;
 
-        if (messaging == null) {
-          throw new TypeError(`Parameter req[body][entry][${i}][messaging] is missing`);
-        }
+      return Array.prototype.concat.apply(
+        [],
+        ...(
+          await pms(
+            entry,
+            async (pageEntry, i) => {
+              try {
+                const messaging = idx(pageEntry, _ => _.messaging);
 
-        if (!Array.isArray(messaging) || !messaging.length) {
-          throw new TypeError(`Parameter req[body][entry][${i}][messaging] is not an array`);
-        }
+                if (!Array.isArray(messaging) || !messaging.length) {
+                  throw new TypeError(
+                    `Parameter req[body][entry][${i}][messaging] is not an array`
+                  );
+                }
 
-        return await Promise.all(messaging.map(async (messageEvent, ii) => {
-          if (messageEvent == null) {
-            throw new TypeError(`Parameter req[body][entry][${i}][messaging][${ii}] is missing`);
-          }
-
-          if ((messageEvent && messageEvent.message) != null) {
-            return handleReceiveMessage(config, messageEvent, options);
-          }
-
-          if ((messageEvent && messageEvent.postback) != null) {
-            return handleReceivePostback(config, messageEvent, options);
-          }
-
-          return messageEvent;
-        }));
-      }));
-
-      return Array.prototype.concat.apply([], ...messageEvents);
+                return await pms(
+                  messaging,
+                  async (messageEvent, ii) => {
+                    try {
+                      switch (true) {
+                        case (messageEvent == null): {
+                          throw new TypeError(
+                            `Parameter req[body][entry][${i}][messaging][${ii}] is missing`
+                          );
+                        }
+                        case ('message' in messageEvent): {
+                          return await handleReceiveMessage(config, messageEvent, options);
+                        }
+                        case ('postback' in messageEvent): {
+                          return await handleReceivePostback(config, messageEvent, options);
+                        }
+                        // case ('attachment' in messageEvent): {
+                        //   return handleReceiveAttachment(config, messageEvent, options);
+                        // }
+                        default: {
+                          throw new Error(
+                            `Unknown message event req[body][entry][${i}][messaging][${ii}]`
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      throw e;
+                    }
+                  }
+                );
+              } catch (e) {
+                throw e;
+              }
+            }
+          )
+        )
+      );
     }
 
     throw new Error(`Unknown object (${object})`);
@@ -100,7 +128,11 @@ export function webhook(
           throw new TypeError('Parameter appConfig is undefined');
         }
 
-        return await handleWebhook(appConfig, options, req, res);
+        const d = await handleWebhook(appConfig, options, req, res);
+
+        console.log('⛑ [POST] webhook', d);
+
+        return d;
       } catch (e) {
         return next(e);
       }

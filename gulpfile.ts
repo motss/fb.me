@@ -43,6 +43,7 @@ const BABELRC = {
     ] : []),
   ],
   plugins: [
+    'babel-plugin-idx',
     ['transform-object-rest-spread', { useBuiltIns: true }],
   ],
   ignore: isProd

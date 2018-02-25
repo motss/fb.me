@@ -156,7 +156,7 @@ describe('handle-webhook', () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
       expect(e instanceof TypeError).toEqual(true);
-      expect(e.message).toEqual('Parameter req[body][entry][0][messaging] is missing');
+      expect(e.message).toEqual('Parameter req[body][entry][0][messaging] is not an array');
     }
   });
 
@@ -221,17 +221,11 @@ describe('handle-webhook', () => {
           ],
         },
       };
-      const d = await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
-
+      await handleWebhook(testAppConfig, null, mockReq as any, mockRes as any);
+    } catch (e) {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenLastCalledWith('EVENT_RECEIVED');
-      expect(d).toEqual([
-        {
-          test: 'Hello, World!',
-        },
-      ]);
-    } catch (e) {
-      throw e;
+      expect(e).toEqual(new Error('Unknown message event req[body][entry][0][messaging][0]'));
     }
   });
 

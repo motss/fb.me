@@ -16,6 +16,7 @@
           ]
         ],
         "plugins": [
+          "babel-plugin-idx",
           [
             "transform-object-rest-spread",
             {
