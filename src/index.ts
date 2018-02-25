@@ -37,9 +37,9 @@ export function messageflow(
   options?: RequestInit
 ): express.Application {
   return express()
-    .use('/messenger-code', messengerCode(config))
-    .use('/', verifySetup(config.verifyToken))
-    .use('/', webhook(config, options));
+    .use(verifySetup(config.verifyToken))
+    .use(webhook(config, options))
+    .use('/messenger-code', messengerCode(config));
 }
 
 export * from './handle-domain-whitelisting';

@@ -128,11 +128,10 @@ export function webhook(
           throw new TypeError('Parameter appConfig is undefined');
         }
 
-        const d = await handleWebhook(appConfig, options, req, res);
-
-        console.log('⛑ [POST] webhook', d);
-
-        return d;
+        console.log(
+          '⛑ [POST] webhook',
+          await handleWebhook(appConfig, options, req, res)
+        );
       } catch (e) {
         return next(e);
       }
