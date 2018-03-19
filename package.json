@@ -1,6 +1,6 @@
 {
   "name": "fb.me",
-  "version": "0.3.0-alpha.1",
+  "version": "0.3.0-alpha.2",
   "description": "Express app for chatbot development with Facebook Messenger",
   "keywords": [
     "facebook",
