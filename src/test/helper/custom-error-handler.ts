@@ -18,7 +18,7 @@ function returnErrorStatus(err) {
   }
 }
 
-export function customErrorHandler(err, req, res, next) {
+export function customErrorHandler(err, _, res, __) {
   const errStatus = returnErrorStatus(err);
 
   // console.error('🚨 err', err);

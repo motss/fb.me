@@ -27,7 +27,7 @@ export const testAppConfig: MessageflowConfig = {
   pageId: 'test-fb-page-id',
   typingDelay: 5e2,
   verifyToken: 'test-fb-verify-token',
-};
+} as MessageflowConfig;
 
 export default {
   testConfig,
