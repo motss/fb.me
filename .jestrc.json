@@ -3,26 +3,17 @@
     "ts-jest": {
       "babelConfig": {
         "presets": [
-          [
-            "env",
-            {
-              "targets": {
-                "node": "current"
-              },
-              "spec": true,
-              "modules": "commonjs",
-              "useBuiltIns": true
-            }
-          ]
+          ["env", {
+            "targets": {
+              "node": "current"
+            },
+            "spec": true,
+            "modules": false,
+            "useBuiltIns": true
+          }]
         ],
         "plugins": [
-          "babel-plugin-idx",
-          [
-            "transform-object-rest-spread",
-            {
-              "useBuiltIns": true
-            }
-          ]
+          ["transform-object-rest-spread", { "useBuiltIns": true }]
         ]
       }
     }
@@ -42,7 +33,7 @@
     "**/src/**/*.{ts|tsx}",
     "!**/node_modules/**",
     "!**/src/demo/**/*.{ts|tsx}",
-    "!**/src/test/**/*.{ts|tsx}"
+    "!**/src/test*/**/*.{ts|tsx}"
   ],
   "verbose": true,
   "bail": true,
@@ -53,7 +44,7 @@
     "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
   },
   "testMatch": [
-    "**/src/test/**/*.spec.(ts|tsx)"
+    "**/src/test*/**/*.spec.(ts|tsx)"
   ],
   "moduleFileExtensions": [
     "ts",

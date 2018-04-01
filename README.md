@@ -389,7 +389,7 @@ ___
 
 [travis-badge]: https://img.shields.io/travis/motss/fb.me.svg?style=flat-square
 [nsp-badge]: https://nodesecurity.io/orgs/motss/projects/a1c57ec8-9c17-4912-932b-f1ff6284e2ae/badge
-[daviddm-badge]: https://img.shields.io/david/expressjs/express.svg?style=flat-square
+[daviddm-badge]: https://img.shields.io/david/motss/fb.me.svg?style=flat-square
 [codecov-badge]: https://codecov.io/gh/motss/fb.me/branch/master/graph/badge.svg
 [coveralls-badge]: https://coveralls.io/repos/github/motss/fb.me/badge.svg?branch=master
 
